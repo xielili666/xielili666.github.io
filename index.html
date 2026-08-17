@@ -286,7 +286,7 @@
   .work-showcase-tools .tool{padding:7px 16px;border:1px solid var(--mist);border-radius:var(--radius-badge);font-size:12px;font-weight:500;color:var(--ink);background:var(--paper);transition:all .2s ease}
   .work-showcase-tools .tool:hover{background:var(--char);color:#fff;border-color:var(--char)}
   .work-showcase-right{position:relative;z-index:1}
-  .work-showcase-video{position:relative;border-radius:var(--radius-card);overflow:hidden;cursor:pointer;aspect-ratio:16/9;background:var(--midnight)}
+  .work-showcase-video{position:relative;border-radius:var(--radius-card);overflow:hidden;cursor:pointer;aspect-ratio:16/9;background:var(--mist)}
   .work-showcase-video video,.work-showcase-video img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
   .work-showcase-video-label{position:absolute;top:18px;left:18px;z-index:2;padding:7px 14px;background:var(--char);color:#fff;font-size:12px;font-weight:600;letter-spacing:.05em;border-radius:4px;display:flex;align-items:center;gap:6px}
   .work-showcase-video-label::before{content:'';display:inline-block;width:6px;height:6px;background:var(--ember);border-radius:50%}
@@ -312,7 +312,7 @@
   .work{position:relative;border-radius:var(--radius-card);overflow:hidden;aspect-ratio:16/10;background:var(--mist);cursor:pointer;grid-column:span 4;transform:scale(.96);opacity:0;transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
   .work.in{opacity:1;transform:scale(1)}
   .work.span6{grid-column:span 6}
-  .work.vertical{grid-column:span 3;aspect-ratio:9/16;background:var(--midnight)}
+  .work.vertical{grid-column:span 3;aspect-ratio:9/16;background:var(--mist)}
   .work.vertical .work-title{font-size:16px;line-height:1.3}
   .work.vertical .work-meta{font-size:11px;margin-top:3px}
   .work.vertical .work-overlay{padding:18px}
@@ -641,7 +641,7 @@
   <div class="about-body">
     <div class="about-image reveal">
       <div class="img-bg"></div>
-      <img class="portrait" src="works/xie-portrait.jpg" alt="谢丽丽 · 个人形象照" loading="lazy" />
+      <img class="portrait" src="works/xie-portrait.jpg" alt="谢丽丽 · 个人形象照" loading="eager" />
       <div class="portrait-vignette"></div>
       <div class="label">
         <span>@xie.li.li</span>
@@ -1063,7 +1063,7 @@
       } else if (w.coverVideo) {
         mediaHtml = '<video class="work-poster" src="' + w.video + '" poster="' + w.poster + '" muted loop playsinline preload="none" data-lazy-video></video>';
       } else {
-        mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" loading="lazy">';
+        mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" loading="eager">';
       }
       card.innerHTML =
         (w.vertical ? '<span class="work-916-badge">9:16 · 信息流</span>' : '') +
@@ -1104,7 +1104,7 @@
         '<div class="work-showcase-right">' +
           '<div class="work-showcase-video" data-index="'+i+'">' +
             '<span class="work-showcase-video-label">'+(w.showcaseLabel || 'AI 漫剧 · 正片')+'</span>' +
-            '<img src="'+w.poster+'" alt="'+w.title+'" loading="lazy">' +
+            '<img src="'+w.poster+'" alt="'+w.title+'" loading="eager">' +
             '<video src="'+w.video+'" muted loop playsinline preload="none"></video>' +
           '</div>' +
         '</div>';
