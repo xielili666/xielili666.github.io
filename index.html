@@ -470,7 +470,7 @@
   @keyframes preloaderAutoHide{to{opacity:0;visibility:hidden;pointer-events:none}}
   /* 背景视频：起始高斯模糊 + 暗化 → 渐入清晰（相机对焦感） */
   .preloader-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;display:block;animation:preloaderFocus 1.5s cubic-bezier(.22,.61,.36,1) forwards;will-change:filter,opacity,transform}
-  .preloader-bg{position:absolute;inset:0;width:100%;height:100%;background:url('works/hero-poster.jpg?v=6') center/cover no-repeat;display:block;animation:preloaderFocus 1.5s cubic-bezier(.22,.61,.36,1) forwards;will-change:filter,opacity,transform}
+  .preloader-bg{position:absolute;inset:0;width:100%;height:100%;background:url('works/hero-poster.jpg?v=7') center/cover no-repeat;display:block;animation:preloaderFocus 1.5s cubic-bezier(.22,.61,.36,1) forwards;will-change:filter,opacity,transform}
   @keyframes preloaderFocus{0%{filter:blur(34px) brightness(.35) saturate(.6);opacity:0;transform:scale(1.06)}30%{opacity:1}100%{filter:blur(0) brightness(.7) saturate(.85);opacity:1;transform:scale(1)}}
   /* 深色径向蒙版 + 顶部/底部暖调，使整体呈暗金调（呼应 image 2 的电影感暗景） */
   .preloader-scrim{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse at center,rgba(7,7,7,.45) 0%,rgba(7,7,7,.78) 55%,rgba(0,0,0,.94) 100%),linear-gradient(180deg,rgba(20,15,8,.25) 0%,rgba(0,0,0,0) 35%,rgba(0,0,0,0) 65%,rgba(20,15,8,.30) 100%)}
@@ -595,8 +595,8 @@
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
   <div class="hero-media">
-    <video class="hero-bg-video" id="heroBgVideo" muted loop playsinline webkit-playsinline preload="auto" poster="works/hero-poster.jpg?v=6" disablepictureinpicture disableremoteplayback x5-video-player-type="h5" x5-video-player-fullscreen="false" aria-hidden="true">
-      <source src="works/hero-cover.mp4?v=8" type="video/mp4">
+    <video class="hero-bg-video" id="heroBgVideo" muted loop playsinline webkit-playsinline preload="auto" poster="works/hero-poster.jpg?v=7" disablepictureinpicture disableremoteplayback x5-video-player-type="h5" x5-video-player-fullscreen="false" aria-hidden="true">
+      <source src="works/hero-cover.mp4?v=9" type="video/mp4">
     </video>
   </div>
   <div class="hero-scrim"></div>
@@ -1555,28 +1555,53 @@
 </script>
 
 <script>
-  /* Hero 封面视频：先显示 poster 海报，整个视频缓冲完成后再自动播放，避免边下边播造成卡顿 */
+  /* Hero 封面视频：poster 优先，缓冲到可播立即启动，卡顿后自动恢复，不再永久暂停 */
   (function(){
     var v = document.getElementById('heroBgVideo');
     if (!v) return;
     var started = false;
-    function start(){
-      if (started) return;
-      started = true;
-      v.play().catch(function(){});
+    var fallbackTimer = null;
+    function tryPlay(){
+      if (started || document.hidden) return;
+      var p = v.play();
+      if (p && typeof p.then === 'function') {
+        p.then(function(){
+          started = true;
+          v.classList.add('is-playing');
+          if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
+        }).catch(function(){
+          // 浏览器策略或未就绪，稍后由 canplay/playing 再次触发
+        });
+      } else {
+        started = true;
+      }
     }
-    /* 整段视频已可流畅播放（canplaythrough）后才播放 */
-    v.addEventListener('canplaythrough', function(){
-      if (!document.hidden) start();
+    /* canplay 即可播放，不必等到 canplaythrough，避免网慢时一直不播 */
+    v.addEventListener('canplay', tryPlay);
+    v.addEventListener('canplaythrough', tryPlay);
+    v.addEventListener('loadeddata', tryPlay);
+    v.addEventListener('playing', function(){
+      started = true;
+      v.classList.add('is-playing');
+      if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
     });
-    /* 兜底：4 秒后若仍未播放，尝试播放（SW 缓存命中时本地秒开） */
-    setTimeout(start, 4000);
-    /* 回到前台时恢复播放（仅当已缓冲足够） */
+    /* 缓冲等待时不要主动 pause，浏览器缓冲够会自动恢复，恢复时 playing/canplay 会再次触发 tryPlay */
+    v.addEventListener('waiting', function(){
+      started = false;
+    });
+    /* 若浏览器/后台导致暂停，回到前台或 pause 后自动重试 */
+    v.addEventListener('pause', function(){
+      if (!document.hidden) {
+        setTimeout(tryPlay, 200);
+      }
+    });
     document.addEventListener('visibilitychange', function(){
-      if (!document.hidden && v.readyState >= 3) start();
+      if (!document.hidden && v.paused) tryPlay();
     });
-    /* 网络差导致缓冲时，保持 poster 静态图，绝不反复空转 */
-    v.addEventListener('waiting', function(){ v.pause(); });
+    /* 兜底：2.5 秒后仍未播放再试一次（SW 缓存命中时本地秒开） */
+    fallbackTimer = setTimeout(tryPlay, 2500);
+    /* 加载失败时保持 poster */
+    v.addEventListener('error', function(){});
   })();
 </script>
 
@@ -1584,7 +1609,7 @@
   /* 注册 Service Worker：让作品图片/视频缓存到本地，重访秒开、不再重新加载 */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js?v=6').catch(function () {});
+      navigator.serviceWorker.register('/sw.js?v=7').catch(function () {});
     });
   }
 </script>
