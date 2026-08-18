@@ -558,6 +558,7 @@
   .work-ep-tag.is-other::before{background:#fff;color:#fff}
   .work-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
   .work:hover .work-poster{transform:scale(1.07)}
+  .work.poster-error{background:linear-gradient(135deg,#e8e4dc,#d5cfc5)}
   /* 作品卡：双视频并排铺开预览（替代单图 poster） */
   .work-ep-grid{position:absolute;inset:0;display:flex;background:#f0eee9}
   .work-ep-cell{position:relative;flex:1 1 0;overflow:hidden;background:#f0eee9}
@@ -1398,11 +1399,11 @@ if(navigator.serviceWorker){
       tools:['豆包 Seedance 2.0 Fast','libTV','剪映完成剪辑'],
       showcaseLabel:'AI 短剧 · 81s预告' },
     { title:'霓虹空间短片', cat:'创意视频', coverVideo:true, poster:'works/creative-video-2.jpg', video:'works/creative-video-2.mp4', meta:'创意视频 · 30s · 1278x720', desc:'以霓虹色与冷调灯光营造沉浸式零售空间，镜头在货架与冷柜之间缓缓推进，探索光影、质感与商业氛围的视觉叙事。', points:['霓虹色彩','空间叙事','视觉氛围'] },
-    { title:'柏讯嘉充电宝广告', cat:'电商信息流', vertical:true, poster:'works/boxunjia-powerbank.jpg', video:'works/boxunjia-powerbank.mp4', meta:'数码产品 · 9:16 信息流', desc:'将充电宝产品功能放入更具场景感的画面中，通过产品露出、使用情境和视觉钩子增强卖点记忆。', points:['数码产品卖点','场景化展示','TVC 质感表达'] },
-    { title:'抗静电香氛喷雾广告', cat:'电商信息流', vertical:true, poster:'works/anti-static-fragrance-spray.jpg', video:'works/anti-static-fragrance-spray.mp4', meta:'日化产品 · 9:16 信息流', desc:'围绕香氛喷雾的使用场景和功能利益点进行广告化表达，适合电商详情页视频和信息流素材展示。', points:['日化产品种草','功能利益点表达','电商转化素材'] },
-    { title:'牛肉馅饼食品广告', cat:'电商信息流', vertical:true, poster:'works/beef-pie.jpg', video:'works/beef-pie.mp4', meta:'食品广告 · 9:16 信息流', desc:'以食品卖点和食欲感为核心，强化产品质感、场景联想与购买欲，适合作为食品类电商短视频案例。', points:['食品质感呈现','食欲钩子','电商短视频广告'] },
-    { title:'泡澡桶电商广告', cat:'电商信息流', vertical:true, poster:'works/bath-bucket.jpg', video:'works/bath-bucket.mp4', meta:'家居产品 · 9:16 信息流', desc:'通过家居使用场景展示泡澡桶的功能体验，把产品利益点转化为更容易理解的生活方式画面。', points:['家居场景表达','功能体验展示','电商广告包装'] },
-    { title:'杨子吸尘器广告', cat:'电商信息流', vertical:true, poster:'works/yangzi-vacuum.jpg', video:'works/yangzi-vacuum.mp4', meta:'家电产品 · 9:16 信息流', desc:'围绕吸尘器清洁能力和家居场景展开，用明确的功能演示和产品露出服务电商转化。', points:['家电功能演示','清洁场景展示','电商卖点转化'] },
+    { title:'柏讯嘉充电宝广告', cat:'电商信息流', vertical:true, poster:'boxunjia-powerbank.jpg', video:'works/boxunjia-powerbank.mp4', meta:'数码产品 · 9:16 信息流', desc:'将充电宝产品功能放入更具场景感的画面中，通过产品露出、使用情境和视觉钩子增强卖点记忆。', points:['数码产品卖点','场景化展示','TVC 质感表达'] },
+    { title:'抗静电香氛喷雾广告', cat:'电商信息流', vertical:true, poster:'anti-static-fragrance-spray.jpg', video:'works/anti-static-fragrance-spray.mp4', meta:'日化产品 · 9:16 信息流', desc:'围绕香氛喷雾的使用场景和功能利益点进行广告化表达，适合电商详情页视频和信息流素材展示。', points:['日化产品种草','功能利益点表达','电商转化素材'] },
+    { title:'牛肉馅饼食品广告', cat:'电商信息流', vertical:true, poster:'beef-pie.jpg', video:'works/beef-pie.mp4', meta:'食品广告 · 9:16 信息流', desc:'以食品卖点和食欲感为核心，强化产品质感、场景联想与购买欲，适合作为食品类电商短视频案例。', points:['食品质感呈现','食欲钩子','电商短视频广告'] },
+    { title:'泡澡桶电商广告', cat:'电商信息流', vertical:true, poster:'bath-bucket.jpg', video:'works/bath-bucket.mp4', meta:'家居产品 · 9:16 信息流', desc:'通过家居使用场景展示泡澡桶的功能体验，把产品利益点转化为更容易理解的生活方式画面。', points:['家居场景表达','功能体验展示','电商广告包装'] },
+    { title:'杨子吸尘器广告', cat:'电商信息流', vertical:true, poster:'yangzi-vacuum.jpg', video:'works/yangzi-vacuum.mp4', meta:'家电产品 · 9:16 信息流', desc:'围绕吸尘器清洁能力和家居场景展开，用明确的功能演示和产品露出服务电商转化。', points:['家电功能演示','清洁场景展示','电商卖点转化'] },
     /* ===== 以下 7 个图片类作品复刻自 3dd8d7b02fd04f16b00135f108a4f09c.sh4.agentos-app.net（谢丽丽另一作品集） ===== */
     { title:'柏讯嘉 30W 充电宝 电商设计', cat:'电商设计', catTag:'电商设计 · 30W快充', poster:'works/xie-ec-main.jpg',
       gallery:['works/xie-ec-main.jpg','works/xie-ec-banner.jpg','works/xie-ec-detail1.jpg','works/xie-ec-detail2.jpg','works/xie-ec-detail3.jpg','works/xie-ec-detail4.jpg','works/xie-ec-detail5.jpg','works/xie-ec-detail6.jpg'],
@@ -1536,7 +1537,7 @@ if(navigator.serviceWorker){
       } else if (w.coverVideo) {
         mediaHtml = '<video class="work-poster" src="' + w.video + '" autoplay muted loop playsinline preload="metadata"></video>';
       } else {
-        mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" loading="lazy">';
+        mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" loading="lazy" onerror="this.onerror=null;this.style.opacity=\'.25\';this.parentElement.classList.add(\'poster-error\')">';
       }
       card.innerHTML =
         (w.vertical ? '<span class="work-916-badge">9:16 · 信息流</span>' : '') +
@@ -1577,7 +1578,7 @@ if(navigator.serviceWorker){
         '<div class="work-showcase-right">' +
           '<div class="work-showcase-video" data-index="'+i+'">' +
             '<span class="work-showcase-video-label">'+(w.showcaseLabel || 'AI 短剧 · 正片')+'</span>' +
-            '<img src="'+w.poster+'" alt="'+w.title+'" loading="lazy">' +
+            '<img src="'+w.poster+'" alt="'+w.title+'" loading="lazy" onerror="this.onerror=null;this.style.opacity='.25';this.parentElement.classList.add('poster-error')">' +
             '<video src="'+w.video+'" muted loop playsinline preload="metadata"></video>' +
           '</div>' +
         '</div>';
