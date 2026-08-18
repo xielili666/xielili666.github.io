@@ -1,12 +1,28 @@
-/* 谢丽丽作品集 · Service Worker
+/* 谢丽丽作品集 · Service Worker v4
  * 作用：首次访问时把 /works/ 下的图片与视频缓存到浏览器本地，
- *       之后每次进页面直接从本地读取，秒开、不再重新下载（解决“每次进来都重新加载”）。
- * 注意：修改了图片/视频内容后，需要把下方 CACHE 版本号 +1（例如 v1 -> v2）让用户拿到新内容。
+ *       之后每次进页面直接从本地读取，秒开、不再重新下载。
+ * 注意：升级时清理所有旧版本缓存（install + activate 都清理），
+ *       避免旧 SW 缓存的旧视频残留导致用户一直看到老文件。
  */
-const CACHE = 'xielili-works-v3';
+const CACHE = 'xielili-works-v4';
 
-self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
+self.addEventListener('install', (e) => {
+  e.waitUntil((async () => {
+    // 安装新 SW 时清掉所有旧缓存
+    const keys = await caches.keys();
+    await Promise.all(keys.map((k) => caches.delete(k)));
+    await self.skipWaiting();
+  })());
+});
+
+self.addEventListener('activate', (e) => {
+  e.waitUntil((async () => {
+    // 接管客户端时再次清理所有非当前缓存，确保 v1/v2/v3 全部清除
+    const keys = await caches.keys();
+    await Promise.all(keys.map((k) => (k !== CACHE ? caches.delete(k) : null)));
+    await self.clients.claim();
+  })());
+});
 
 function isImage(p) {
   return /\.(jpg|jpeg|png|webp|gif|svg|avif)$/i.test(p);
