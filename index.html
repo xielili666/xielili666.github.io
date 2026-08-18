@@ -470,6 +470,7 @@
   @keyframes preloaderAutoHide{to{opacity:0;visibility:hidden;pointer-events:none}}
   /* 背景视频：起始高斯模糊 + 暗化 → 渐入清晰（相机对焦感） */
   .preloader-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;display:block;animation:preloaderFocus 1.5s cubic-bezier(.22,.61,.36,1) forwards;will-change:filter,opacity,transform}
+  .preloader-bg{position:absolute;inset:0;width:100%;height:100%;background:url('works/hero-poster.jpg?v=6') center/cover no-repeat;display:block;animation:preloaderFocus 1.5s cubic-bezier(.22,.61,.36,1) forwards;will-change:filter,opacity,transform}
   @keyframes preloaderFocus{0%{filter:blur(34px) brightness(.35) saturate(.6);opacity:0;transform:scale(1.06)}30%{opacity:1}100%{filter:blur(0) brightness(.7) saturate(.85);opacity:1;transform:scale(1)}}
   /* 深色径向蒙版 + 顶部/底部暖调，使整体呈暗金调（呼应 image 2 的电影感暗景） */
   .preloader-scrim{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse at center,rgba(7,7,7,.45) 0%,rgba(7,7,7,.78) 55%,rgba(0,0,0,.94) 100%),linear-gradient(180deg,rgba(20,15,8,.25) 0%,rgba(0,0,0,0) 35%,rgba(0,0,0,0) 65%,rgba(20,15,8,.30) 100%)}
@@ -553,9 +554,7 @@
 <div id="particles" aria-hidden="true"></div>
 
 <div class="preloader" id="preloader" aria-hidden="true">
-  <video class="preloader-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
-    <source src="works/hero-cover.mp4?v=8" type="video/mp4">
-  </video>
+  <div class="preloader-bg" aria-hidden="true"></div>
   <div class="preloader-scrim" aria-hidden="true"></div>
   <div class="preloader-inner">
     <div class="preloader-ring-wrap" aria-hidden="true">
@@ -596,7 +595,7 @@
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
   <div class="hero-media">
-    <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="works/hero-poster.jpg?v=6" disablepictureinpicture disableremoteplayback x5-video-player-type="h5" x5-video-player-fullscreen="false" aria-hidden="true">
+    <video class="hero-bg-video" id="heroBgVideo" muted loop playsinline webkit-playsinline preload="auto" poster="works/hero-poster.jpg?v=6" disablepictureinpicture disableremoteplayback x5-video-player-type="h5" x5-video-player-fullscreen="false" aria-hidden="true">
       <source src="works/hero-cover.mp4?v=8" type="video/mp4">
     </video>
   </div>
@@ -1556,44 +1555,28 @@
 </script>
 
 <script>
-  /* Hero 封面视频：强制自动播放；若网络/解码卡顿则自动暂停，避免反复缓冲 */
+  /* Hero 封面视频：先显示 poster 海报，整个视频缓冲完成后再自动播放，避免边下边播造成卡顿 */
   (function(){
     var v = document.getElementById('heroBgVideo');
     if (!v) return;
-    var stallTimer = null, stallCount = 0, lastStall = 0;
-    function tryPlay(){
-      if (v.paused && !v.classList.contains('is-stalled')) {
-        v.play().catch(function(){});
-      }
+    var started = false;
+    function start(){
+      if (started) return;
+      started = true;
+      v.play().catch(function(){});
     }
-    function markStalled(){
-      var now = Date.now();
-      if (now - lastStall > 3000) stallCount = 0;
-      lastStall = now; stallCount++;
-      if (stallCount >= 2) {
-        v.classList.add('is-stalled');
-        v.pause();
-        clearTimeout(stallTimer);
-      }
-    }
-    function clearStall(){ stallCount = 0; clearTimeout(stallTimer); }
-    v.addEventListener('loadedmetadata', tryPlay);
-    v.addEventListener('canplay', tryPlay);
-    v.addEventListener('canplaythrough', clearStall);
-    v.addEventListener('playing', clearStall);
-    v.addEventListener('pause', tryPlay);
-    v.addEventListener('waiting', markStalled);
-    v.addEventListener('stalled', markStalled);
-    v.addEventListener('suspend', markStalled);
-    window.addEventListener('load', tryPlay);
-    document.addEventListener('visibilitychange', function(){
-      if (!document.hidden) tryPlay();
+    /* 整段视频已可流畅播放（canplaythrough）后才播放 */
+    v.addEventListener('canplaythrough', function(){
+      if (!document.hidden) start();
     });
-    // 兜底：4 秒后仍无法进入可播放状态，暂停避免持续缓冲
-    stallTimer = setTimeout(function(){
-      if (v.readyState < 3 || v.paused) { v.classList.add('is-stalled'); v.pause(); }
-    }, 4000);
-    tryPlay();
+    /* 兜底：4 秒后若仍未播放，尝试播放（SW 缓存命中时本地秒开） */
+    setTimeout(start, 4000);
+    /* 回到前台时恢复播放（仅当已缓冲足够） */
+    document.addEventListener('visibilitychange', function(){
+      if (!document.hidden && v.readyState >= 3) start();
+    });
+    /* 网络差导致缓冲时，保持 poster 静态图，绝不反复空转 */
+    v.addEventListener('waiting', function(){ v.pause(); });
   })();
 </script>
 
