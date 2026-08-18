@@ -106,7 +106,8 @@
     z-index:2;
   }
   .hero-media{position:absolute;top:0;left:0;width:100%;height:100%;z-index:3;overflow:hidden;background:var(--midnight)}
-  .hero-bg-video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;background:var(--midnight)}
+  .hero-bg-img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1;background:var(--midnight)}
+  .hero-bg-video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;z-index:2;background:var(--midnight)}
   .hero-scrim{position:absolute;top:0;left:0;width:100%;height:100%;z-index:4;background:linear-gradient(180deg,rgba(7,7,7,.25) 0%,rgba(7,7,7,.45) 55%,rgba(7,7,7,.72) 100%);pointer-events:none}
   /* Hello, I'm 谢丽丽 - 严格左下角 */
   .hero-inner{position:absolute;left:0;bottom:0;z-index:50;width:100%;max-width:var(--page-max);margin:0;text-align:left;padding:0 48px 8vh;box-sizing:border-box}
@@ -573,8 +574,9 @@
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
   <div class="hero-media">
-    <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline x5-playsinline preload="auto" poster="works/hero-poster.jpg?v=15" aria-hidden="true">
-      <source src="works/hero-cover.mp4?v=15" type="video/mp4">
+    <img class="hero-bg-img" src="works/hero-poster.jpg?v=16" alt="" aria-hidden="true">
+    <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline x5-playsinline preload="auto" aria-hidden="true">
+      <source src="works/hero-cover.mp4?v=16" type="video/mp4">
     </video>
   </div>
   <div class="hero-scrim"></div>
@@ -1536,7 +1538,7 @@
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js?v=15').catch(function () {});
+      navigator.serviceWorker.register('/sw.js?v=16').catch(function () {});
     });
   }
 </script>
