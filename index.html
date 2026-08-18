@@ -554,7 +554,7 @@
 
 <div class="preloader" id="preloader" aria-hidden="true">
   <video class="preloader-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
-    <source src="works/hero-cover.mp4?v=6" type="video/mp4">
+    <source src="works/hero-cover.mp4?v=7" type="video/mp4">
   </video>
   <div class="preloader-scrim" aria-hidden="true"></div>
   <div class="preloader-inner">
@@ -596,8 +596,8 @@
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
   <div class="hero-media">
-    <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline preload="auto" poster="works/hero-poster.jpg?v=4" aria-hidden="true">
-      <source src="works/hero-cover.mp4?v=6" type="video/mp4">
+    <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="works/hero-poster.jpg?v=5" disablepictureinpicture disableremoteplayback x5-video-player-type="h5" x5-video-player-fullscreen="false" aria-hidden="true">
+      <source src="works/hero-cover.mp4?v=7" type="video/mp4">
     </video>
   </div>
   <div class="hero-scrim"></div>
@@ -1355,7 +1355,7 @@
   /* =========== Floating particles =========== */
   const particlesEl = document.getElementById('particles');
   if (particlesEl) {
-  for (let i = 0; i < 18; i++) {
+  for (let i = 0; i < 10; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
     p.style.left = Math.random() * 100 + '%';
@@ -1496,7 +1496,7 @@
       cv.style.width = w + 'px'; cv.style.height = h + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       var count = Math.round((w * h) / 52000);
-      count = Math.max(8, Math.min(18, count));
+      count = Math.max(6, Math.min(12, count));
       stars = [];
       for (var i = 0; i < count; i++){
         stars.push({
@@ -1556,22 +1556,43 @@
 </script>
 
 <script>
-  /* Hero 封面视频：强制自动播放，避免部分浏览器默认拦截导致黑屏 */
+  /* Hero 封面视频：强制自动播放；若网络/解码卡顿则自动暂停，避免反复缓冲 */
   (function(){
     var v = document.getElementById('heroBgVideo');
     if (!v) return;
+    var stallTimer = null, stallCount = 0, lastStall = 0;
     function tryPlay(){
-      if (v.paused) {
+      if (v.paused && !v.classList.contains('is-stalled')) {
         v.play().catch(function(){});
       }
     }
+    function markStalled(){
+      var now = Date.now();
+      if (now - lastStall > 3000) stallCount = 0;
+      lastStall = now; stallCount++;
+      if (stallCount >= 2) {
+        v.classList.add('is-stalled');
+        v.pause();
+        clearTimeout(stallTimer);
+      }
+    }
+    function clearStall(){ stallCount = 0; clearTimeout(stallTimer); }
     v.addEventListener('loadedmetadata', tryPlay);
     v.addEventListener('canplay', tryPlay);
+    v.addEventListener('canplaythrough', clearStall);
+    v.addEventListener('playing', clearStall);
     v.addEventListener('pause', tryPlay);
+    v.addEventListener('waiting', markStalled);
+    v.addEventListener('stalled', markStalled);
+    v.addEventListener('suspend', markStalled);
     window.addEventListener('load', tryPlay);
     document.addEventListener('visibilitychange', function(){
       if (!document.hidden) tryPlay();
     });
+    // 兜底：4 秒后仍无法进入可播放状态，暂停避免持续缓冲
+    stallTimer = setTimeout(function(){
+      if (v.readyState < 3 || v.paused) { v.classList.add('is-stalled'); v.pause(); }
+    }, 4000);
     tryPlay();
   })();
 </script>
@@ -1580,7 +1601,7 @@
   /* 注册 Service Worker：让作品图片/视频缓存到本地，重访秒开、不再重新加载 */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js?v=4').catch(function () {});
+      navigator.serviceWorker.register('/sw.js?v=5').catch(function () {});
     });
   }
 </script>
