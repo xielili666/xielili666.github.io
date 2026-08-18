@@ -463,31 +463,6 @@
   #particles{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden}
   .particle{position:absolute;border-radius:50%;background:rgba(255,255,255,.7);animation:particleFloat linear infinite}
   @keyframes particleFloat{0%{transform:translateY(0) translateX(0)}25%{transform:translateY(-30vh) translateX(15vw)}50%{transform:translateY(-10vh) translateX(-10vw)}75%{transform:translateY(-45vh) translateX(20vw)}100%{transform:translateY(0) translateX(0)}}
-  /* 纯 CSS 兜底：即使 JS 全部失效，2.6s 后加载页也会自动淡出，绝不永久遮挡页面 */
-  .preloader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#070707;overflow:hidden;opacity:1;visibility:visible;transition:opacity .55s ease,visibility 0s linear .55s;animation:preloaderAutoHide .6s ease 2.6s forwards}
-  .preloader.is-done{opacity:0;visibility:hidden;pointer-events:none;animation:none}
-  @keyframes preloaderAutoHide{to{opacity:0;visibility:hidden;pointer-events:none}}
-  /* 背景视频：起始高斯模糊 + 暗化 → 渐入清晰（相机对焦感） */
-  .preloader-bg{position:absolute;inset:0;width:100%;height:100%;background:url('works/hero-poster.jpg?v=9') center/cover no-repeat;display:block;animation:preloaderFocus 1.5s cubic-bezier(.22,.61,.36,1) forwards;will-change:filter,opacity,transform}
-  @keyframes preloaderFocus{0%{filter:blur(34px) brightness(.35) saturate(.6);opacity:0;transform:scale(1.06)}30%{opacity:1}100%{filter:blur(0) brightness(.7) saturate(.85);opacity:1;transform:scale(1)}}
-  /* 深色径向蒙版 + 顶部/底部暖调，使整体呈暗金调（呼应 image 2 的电影感暗景） */
-  .preloader-scrim{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse at center,rgba(7,7,7,.45) 0%,rgba(7,7,7,.78) 55%,rgba(0,0,0,.94) 100%),linear-gradient(180deg,rgba(20,15,8,.25) 0%,rgba(0,0,0,0) 35%,rgba(0,0,0,0) 65%,rgba(20,15,8,.30) 100%)}
-  .preloader-inner{position:relative;display:flex;flex-direction:column;align-items:center;gap:26px;z-index:2}
-  /* 双层圆环 loader：外环淡描边 + 内环顺时针追逐弧 + 端点小亮点，整体暖金色 */
-  .preloader-ring-wrap{filter:drop-shadow(0 0 12px rgba(245,210,140,.18));animation:preloaderIn 1.3s cubic-bezier(.22,.61,.36,1) .12s backwards}
-  @keyframes preloaderIn{0%{opacity:0;filter:blur(18px) drop-shadow(0 0 0 rgba(245,210,140,0));transform:scale(.7)}60%{filter:blur(0) drop-shadow(0 0 12px rgba(245,210,140,.18))}100%{opacity:1;filter:blur(0) drop-shadow(0 0 12px rgba(245,210,140,.22));transform:scale(1)}}
-  .preloader-ring{display:block;width:62px;height:62px;animation:preloaderSpin 6s linear infinite;transform-origin:32px 32px}
-  .preloader-ring .ring-outer{fill:none;stroke:rgba(245,210,140,.22);stroke-width:1}
-  .preloader-ring .ring-arc{fill:none;stroke:rgba(245,210,140,.95);stroke-width:1.4;stroke-linecap:round;stroke-dasharray:46 100;transform-origin:32px 32px}
-  .preloader-ring .ring-dot{fill:rgba(245,210,140,.95)}
-  .preloader-text{display:flex;flex-direction:column;align-items:center;gap:18px;animation:preloaderTextIn 1.1s cubic-bezier(.22,.61,.36,1) .45s backwards}
-  @keyframes preloaderTextIn{0%{opacity:0;letter-spacing:.5em;filter:blur(10px)}60%{filter:blur(0)}100%{opacity:1;letter-spacing:.26em;filter:blur(0)}}
-  .preloader-name{font-family:'Noto Sans SC','HarmonyOS Sans SC','PingFang SC',-apple-system,'Source Han Sans SC','Microsoft YaHei',sans-serif;font-size:30px;font-weight:200;letter-spacing:.26em;color:#f3ead4;margin:0;line-height:1.3;text-shadow:0 1px 18px rgba(0,0,0,.55),0 0 22px rgba(212,170,90,.10)}
-  .preloader-rule{display:inline-block;width:36px;height:1px;background:linear-gradient(90deg,rgba(243,234,212,0),rgba(243,234,212,.7),rgba(243,234,212,0));margin:6px 0 2px}
-  .preloader-sub{font-family:'Noto Sans SC',sans-serif;font-size:10px;font-weight:300;letter-spacing:.55em;color:rgba(243,234,212,.45);margin:0;text-transform:uppercase}
-  @keyframes preloaderSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-  /* 对 reduced-motion 用户：跳过模糊渐入，直接落定清晰终态 + 立即淡出 */
-  @media (prefers-reduced-motion:reduce){.preloader-ring-wrap,.preloader-text{animation:none;opacity:1;filter:none;transform:none;letter-spacing:.18em}}
 
   /* =========== QR modal =========== */
   .qr-modal{position:fixed;inset:0;z-index:9500;display:flex;align-items:center;justify-content:center;padding:5vh 5vw;background:rgba(7,7,7,.78);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .3s ease}
@@ -550,24 +525,6 @@
 <!-- =========== Preloader =========== -->
 <canvas id="starfield" class="starfield" aria-hidden="true"></canvas>
 <div id="particles" aria-hidden="true"></div>
-
-<div class="preloader" id="preloader" aria-hidden="true">
-  <div class="preloader-bg" aria-hidden="true"></div>
-  <div class="preloader-scrim" aria-hidden="true"></div>
-  <div class="preloader-inner">
-    <div class="preloader-ring-wrap" aria-hidden="true">
-      <svg class="preloader-ring" viewBox="0 0 64 64" aria-hidden="true">
-        <circle class="ring-outer" cx="32" cy="32" r="28"/>
-        <circle class="ring-arc"   cx="32" cy="32" r="22"/>
-        <circle class="ring-dot"   cx="54" cy="32" r="1.6"/>
-      </svg>
-    </div>
-    <div class="preloader-text">
-      <p class="preloader-name">谢丽丽 · 作品集</p>
-      <span class="preloader-rule" aria-hidden="true"></span>
-    </div>
-  </div>
-</div>
 
 <!-- =========== Header =========== -->
 <header class="site-header hero-on" id="siteHeader">
@@ -1456,28 +1413,6 @@
   })();
 
 
-  /* =========== Preloader 关闭逻辑 =========== */
-  (function(){
-    var pl = document.getElementById('preloader');
-    if (!pl) return;
-    var hidden = false;
-    function hide(){
-      if (hidden) return;
-      hidden = true;
-      pl.classList.add('is-done');
-      setTimeout(function(){
-        if (pl && pl.parentNode) pl.parentNode.removeChild(pl);
-      }, 700);
-    }
-    if (document.readyState === 'complete') {
-      setTimeout(hide, 650);
-    } else {
-      window.addEventListener('load', function(){ setTimeout(hide, 650); });
-    }
-    // 兜底：3.5s 后强制关闭，避免图片卡死时挡操作
-    setTimeout(hide, 3500);
-  })();
-
   /* =========== 白色星芒漂浮粒子背景 =========== */
   (function(){
     var cv = document.getElementById('starfield');
@@ -1554,7 +1489,7 @@
   /* 注册 Service Worker：让作品图片缓存到本地，重访秒开、不再重新加载 */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js?v=9').catch(function () {});
+      navigator.serviceWorker.register('/sw.js?v=10').catch(function () {});
     });
   }
 </script>
