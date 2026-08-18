@@ -1,20 +1,9 @@
-/* 作品集缓存 Service Worker - v1 */
-var CACHE = 'portfolio-v1';
-var URLS = ['/', '/index.html', '/hero-bg.mp4?v=31'];
-self.addEventListener('install', function(e) {
-  e.waitUntil(caches.open(CACHE).then(function(c) { return c.addAll(URLS); }));
-  self.skipWaiting();
-});
+/* 清理缓存用 SW - 不缓存任何内容，只清理旧缓存 */
+self.addEventListener('install', function(){ self.skipWaiting(); });
 self.addEventListener('activate', function(e) {
   e.waitUntil(Promise.all([
-    caches.keys().then(function(ks) {
-      return Promise.all(ks.filter(function(k) { return k !== CACHE; }).map(function(k) { return caches.delete(k); }));
-    }),
+    caches.keys().then(function(ks) { return Promise.all(ks.map(function(k) { return caches.delete(k); })); }),
     self.clients.claim()
   ]));
 });
-self.addEventListener('fetch', function(e) {
-  e.respondWith(
-    caches.match(e.request).then(function(r) { return r || fetch(e.request); })
-  );
-});
+self.addEventListener('fetch', function(e) { e.respondWith(fetch(e.request)); });
