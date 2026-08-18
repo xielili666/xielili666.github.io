@@ -111,9 +111,6 @@
   }
   .hero-media{position:absolute;inset:0;z-index:3;overflow:hidden;background:var(--midnight);width:100vw;height:100vh}
   .hero-bg-img{position:absolute;inset:0;width:100vw;height:100vh;object-fit:cover;display:block}
-  .hero-bg-anim{position:absolute;inset:0;width:100vw;height:100vh;object-fit:cover;display:block;z-index:1}
-  .hero-bg-video{position:absolute;inset:0;width:100vw;height:100vh;object-fit:cover;display:block;opacity:0;z-index:2;transition:opacity .6s ease}
-  .hero-bg-video.is-playing{opacity:1}
   /* flat scrim for legibility (Aker: darken via subject, but a flat scrim is allowed) */
   /* scrim: only darken the lower band so the art stays vivid up top (legibility for text) */
   .hero-scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(7,7,7,0) 38%,rgba(7,7,7,.18) 62%,rgba(7,7,7,.66) 100%);pointer-events:none}
@@ -471,8 +468,7 @@
   .preloader.is-done{opacity:0;visibility:hidden;pointer-events:none;animation:none}
   @keyframes preloaderAutoHide{to{opacity:0;visibility:hidden;pointer-events:none}}
   /* 背景视频：起始高斯模糊 + 暗化 → 渐入清晰（相机对焦感） */
-  .preloader-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;display:block;animation:preloaderFocus 1.5s cubic-bezier(.22,.61,.36,1) forwards;will-change:filter,opacity,transform}
-  .preloader-bg{position:absolute;inset:0;width:100%;height:100%;background:url('works/hero-poster.jpg?v=8') center/cover no-repeat;display:block;animation:preloaderFocus 1.5s cubic-bezier(.22,.61,.36,1) forwards;will-change:filter,opacity,transform}
+  .preloader-bg{position:absolute;inset:0;width:100%;height:100%;background:url('works/hero-poster.jpg?v=9') center/cover no-repeat;display:block;animation:preloaderFocus 1.5s cubic-bezier(.22,.61,.36,1) forwards;will-change:filter,opacity,transform}
   @keyframes preloaderFocus{0%{filter:blur(34px) brightness(.35) saturate(.6);opacity:0;transform:scale(1.06)}30%{opacity:1}100%{filter:blur(0) brightness(.7) saturate(.85);opacity:1;transform:scale(1)}}
   /* 深色径向蒙版 + 顶部/底部暖调，使整体呈暗金调（呼应 image 2 的电影感暗景） */
   .preloader-scrim{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse at center,rgba(7,7,7,.45) 0%,rgba(7,7,7,.78) 55%,rgba(0,0,0,.94) 100%),linear-gradient(180deg,rgba(20,15,8,.25) 0%,rgba(0,0,0,0) 35%,rgba(0,0,0,0) 65%,rgba(20,15,8,.30) 100%)}
@@ -491,7 +487,7 @@
   .preloader-sub{font-family:'Noto Sans SC',sans-serif;font-size:10px;font-weight:300;letter-spacing:.55em;color:rgba(243,234,212,.45);margin:0;text-transform:uppercase}
   @keyframes preloaderSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
   /* 对 reduced-motion 用户：跳过模糊渐入，直接落定清晰终态 + 立即淡出 */
-  @media (prefers-reduced-motion:reduce){.preloader-video{animation:none;filter:none;transform:none}.preloader-ring-wrap,.preloader-text{animation:none;opacity:1;filter:none;transform:none;letter-spacing:.18em}}
+  @media (prefers-reduced-motion:reduce){.preloader-ring-wrap,.preloader-text{animation:none;opacity:1;filter:none;transform:none;letter-spacing:.18em}}
 
   /* =========== QR modal =========== */
   .qr-modal{position:fixed;inset:0;z-index:9500;display:flex;align-items:center;justify-content:center;padding:5vh 5vw;background:rgba(7,7,7,.78);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .3s ease}
@@ -597,10 +593,7 @@
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
   <div class="hero-media">
-    <img class="hero-bg-anim" src="works/hero-animated.webp?v=2" alt="" aria-hidden="true">
-    <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline x5-playsinline preload="auto" poster="works/hero-poster.jpg?v=8" aria-hidden="true">
-      <source src="works/hero-cover.mp4?v=10" type="video/mp4">
-    </video>
+    <img class="hero-bg-img" src="works/hero-poster.jpg?v=9" alt="" aria-hidden="true">
   </div>
   <div class="hero-scrim"></div>
 
@@ -1558,71 +1551,10 @@
 </script>
 
 <script>
-  /* Hero 封面视频：autoplay + poster 优先，多事件兜底，卡顿后自动恢复 */
-  (function(){
-    var v = document.getElementById('heroBgVideo');
-    if (!v) return;
-    var hasCalledPlay = false;
-    var isPlaying = false;
-    var fallbackTimer = null;
-    var userActivated = false;
-    function markPlaying(){
-      isPlaying = true;
-      v.classList.add('is-playing');
-      if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
-    }
-    function tryPlay(){
-      if (document.hidden) return;
-      // 限制调用频率：真正在播放或最近一次调用还在 150ms 内就不再调用
-      if (isPlaying) return;
-      if (hasCalledPlay) return;
-      hasCalledPlay = true;
-      setTimeout(function(){ hasCalledPlay = false; }, 150);
-      var p = v.play();
-      if (p && typeof p.then === 'function') {
-        p.then(function(){ markPlaying(); }).catch(function(err){
-          // 浏览器自动播放策略/未就绪：等待 canplay/playing/用户交互再次尝试
-        });
-      } else {
-        markPlaying();
-      }
-    }
-    v.addEventListener('canplay', tryPlay);
-    v.addEventListener('canplaythrough', tryPlay);
-    v.addEventListener('loadeddata', tryPlay);
-    v.addEventListener('playing', markPlaying);
-    v.addEventListener('waiting', function(){ isPlaying = false; });
-    v.addEventListener('pause', function(){ isPlaying = false; if (!document.hidden) setTimeout(tryPlay, 200); });
-    v.addEventListener('error', function(){ isPlaying = false; });
-    document.addEventListener('visibilitychange', function(){ if (!document.hidden && v.paused) tryPlay(); });
-    /* 用户首次交互兜底（微信/部分手机浏览器需要用户手势才允许播放） */
-    function onUserActivate(){
-      userActivated = true;
-      tryPlay();
-    }
-    document.addEventListener('click', onUserActivate, {once:true});
-    document.addEventListener('touchstart', onUserActivate, {once:true});
-    document.addEventListener('scroll', onUserActivate, {once:true, passive:true});
-    /* 兜底：2.5 秒后再试一次，5 秒仍未播放则尝试降低可见性压力后重试 */
-    fallbackTimer = setTimeout(function(){
-      if (isPlaying) return;
-      tryPlay();
-      setTimeout(function(){
-        if (!isPlaying && !userActivated) {
-          // 仍未播放可能是浏览器策略限制，等待用户交互时由上面事件触发
-          v.load();
-          tryPlay();
-        }
-      }, 3000);
-    }, 2500);
-  })();
-</script>
-
-<script>
-  /* 注册 Service Worker：让作品图片/视频缓存到本地，重访秒开、不再重新加载 */
+  /* 注册 Service Worker：让作品图片缓存到本地，重访秒开、不再重新加载 */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js?v=8').catch(function () {});
+      navigator.serviceWorker.register('/sw.js?v=9').catch(function () {});
     });
   }
 </script>
