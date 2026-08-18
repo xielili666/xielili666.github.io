@@ -105,28 +105,29 @@
     left:50%;right:50%;
     margin-left:-50vw;margin-right:-50vw;
     background:var(--midnight);
-    overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;
+    overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;
     padding:0;
     z-index:2;
   }
   .hero-media{position:absolute;inset:0;z-index:3;overflow:hidden;background:var(--midnight);width:100vw;height:100vh}
-  .hero-scrim{display:none}
-  /* Hello, I'm 谢丽丽 - 参考截图风格 */
-  .hero-inner{position:relative;z-index:50;width:100%;max-width:var(--page-max);margin:0 auto;text-align:center;padding:0 24px}
+  .hero-bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .hero-scrim{position:absolute;inset:0;z-index:4;background:linear-gradient(180deg,rgba(7,7,7,.25) 0%,rgba(7,7,7,.45) 55%,rgba(7,7,7,.72) 100%);pointer-events:none}
+  /* Hello, I'm 谢丽丽 - 左下角 */
+  .hero-inner{position:relative;z-index:50;width:100%;max-width:var(--page-max);margin:0 auto;text-align:left;padding:0 48px 10vh}
 
   .hero-hello{
     font-family:'Dancing Script','Brush Script MT','Comic Sans MS',cursive;
     font-style:italic;
-    font-size:clamp(36px,6vw,64px);
+    font-size:clamp(32px,5vw,56px);
     color:var(--ember);
-    margin:0 0 8px;
+    margin:0 0 6px;
     line-height:1.1;
     letter-spacing:0;
   }
   .hero-name-large{
     font-family:'Noto Sans SC','HarmonyOS Sans SC','PingFang SC',-apple-system,'Source Han Sans SC','Microsoft YaHei',sans-serif;
     font-weight:900;
-    font-size:clamp(72px,14vw,160px);
+    font-size:clamp(64px,11vw,140px);
     line-height:1;
     letter-spacing:.02em;
     color:#fff;
@@ -134,11 +135,11 @@
   }
   .hero-role{
     font-family:var(--font-body);
-    font-size:clamp(13px,2vw,16px);
+    font-size:clamp(13px,1.6vw,16px);
     font-weight:400;
     letter-spacing:.12em;
-    color:rgba(255,255,255,.6);
-    margin:28px 0 0;
+    color:rgba(255,255,255,.72);
+    margin:18px 0 0;
     text-transform:uppercase;
   }
   /* 旧 hero 元素已移除，保留兼容 */
@@ -502,10 +503,10 @@
     .site-header{padding:9px 12px 9px 18px;top:14px;right:14px}
     .nav{display:none}
     section{padding:64px 20px}
-    .hero-inner{padding:0 20px}
-    .hero-hello{font-size:clamp(28px,8vw,44px);margin-bottom:4px}
-    .hero-name-large{font-size:clamp(56px,16vw,96px)}
-    .hero-role{font-size:12px;letter-spacing:.08em;margin-top:18px}
+    .hero-inner{padding:0 20px 8vh}
+    .hero-hello{font-size:clamp(26px,7vw,40px);margin-bottom:4px}
+    .hero-name-large{font-size:clamp(48px,13vw,80px)}
+    .hero-role{font-size:12px;letter-spacing:.08em;margin-top:14px}
     .about-body{grid-template-columns:1fr;gap:36px}
     .about-card{grid-template-columns:1fr;gap:24px;max-width:880px}
     .about-card-right{padding:26px 22px;grid-template-columns:1fr;gap:18px}
@@ -574,7 +575,11 @@
 
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
-  <div class="hero-media"></div>
+  <div class="hero-media">
+    <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline x5-playsinline preload="auto" poster="works/hero-poster.jpg?v=13" aria-hidden="true">
+      <source src="works/hero-cover.mp4?v=13" type="video/mp4">
+    </video>
+  </div>
   <div class="hero-scrim"></div>
 
   <!-- Hero content: Hello, I'm 谢丽丽 -->
@@ -1518,9 +1523,23 @@
 
 <script>
   /* 注册 Service Worker：让作品图片缓存到本地，重访秒开、不再重新加载 */
+  /* Hero 视频：自动播放兜底，微信/移动端被拦截后通过用户交互恢复 */
+  (function(){
+    var v = document.getElementById('heroBgVideo');
+    if (!v) return;
+    function tryPlay(){ if (!document.hidden) v.play().catch(function(){}); }
+    v.addEventListener('canplay', tryPlay);
+    v.addEventListener('loadeddata', tryPlay);
+    function wake(){ tryPlay(); }
+    document.addEventListener('visibilitychange', function(){ if (!document.hidden) tryPlay(); });
+    document.addEventListener('click', wake, {once:true});
+    document.addEventListener('touchstart', wake, {once:true});
+    setTimeout(tryPlay, 300);
+  })();
+
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js?v=12').catch(function () {});
+      navigator.serviceWorker.register('/sw.js?v=13').catch(function () {});
     });
   }
 </script>
