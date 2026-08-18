@@ -905,7 +905,7 @@ if(navigator.serviceWorker){
 
 <!-- =========== 加载页 =========== -->
 <div class="page-loader" id="pageLoader">
-  <video class="page-loader-video" id="loaderVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+  <video class="page-loader-video" id="loaderVideo" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
     <source src="works/dream-cover.mp4" type="video/mp4">
   </video>
   <canvas class="page-loader-canvas" id="loaderCanvas"></canvas>
@@ -915,74 +915,90 @@ if(navigator.serviceWorker){
 </div>
 
 <script>
-/* 加载页 Canvas 粒子动画 */
+/* 加载页：粒子动画 + 预加载封面视频 + 2.5秒后切换 */
 (function(){
+  var loader = document.getElementById('pageLoader');
   var canvas = document.getElementById('loaderCanvas');
-  if(!canvas) return;
-  var ctx = canvas.getContext('2d');
-  var W, H, dots = [];
-  function resize(){
-    W = window.innerWidth; H = window.innerHeight;
-    canvas.width = W; canvas.height = H;
-  }
-  function makeDots(){
-    dots = [];
-    var count = Math.min(60, Math.round(W * H / 15000));
-    for(var i = 0; i < count; i++){
-      dots.push({
-        x: Math.random() * W, y: Math.random() * H,
-        r: Math.random() * 2 + 1,
-        dx: (Math.random() - 0.5) * 0.5,
-        dy: (Math.random() - 0.5) * 0.5,
-        a: Math.random() * 0.5 + 0.2
-      });
-    }
-  }
-  function draw(){
-    ctx.clearRect(0, 0, W, H);
-    for(var i = 0; i < dots.length; i++){
-      var d = dots[i];
-      d.x += d.dx; d.y += d.dy;
-      if(d.x < 0) d.x = W; if(d.x > W) d.x = 0;
-      if(d.y < 0) d.y = H; if(d.y > H) d.y = 0;
-      ctx.beginPath();
-      ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255,255,255,' + d.a + ')';
-      ctx.fill();
-    }
-    animId = requestAnimationFrame(draw);
-  }
-  var animId;
-  resize();
-  makeDots();
-  draw();
-  window.addEventListener('resize', function(){ resize(); makeDots(); });
+  var heroVideo = document.getElementById('heroBgVideo');
   
-  /* 2.5 秒后隐藏加载页，显示内容 */
+  /* ---- 预加载封面视频 ---- */
+  var heroVideoSrc = 'hero-bg.mp4?v=33';
+  if(heroVideo){
+    /* 用 fetch 提前下载视频到浏览器缓存，2.5秒后直接播放 */
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', heroVideoSrc, true);
+    xhr.responseType = 'blob';
+    xhr.send();
+    /* 同时触发 video 元素开始缓冲 */
+    heroVideo.src = heroVideoSrc;
+    heroVideo.load();
+  }
+  
+  /* ---- Canvas 粒子动画 ---- */
+  var ctx = canvas ? canvas.getContext('2d') : null;
+  var W, H, dots = [];
+  if(ctx){
+    function resize(){
+      W = window.innerWidth; H = window.innerHeight;
+      canvas.width = W; canvas.height = H;
+    }
+    function makeDots(){
+      dots = [];
+      var count = Math.min(60, Math.round(W * H / 15000));
+      for(var i = 0; i < count; i++){
+        dots.push({
+          x: Math.random() * W, y: Math.random() * H,
+          r: Math.random() * 2 + 1,
+          dx: (Math.random() - 0.5) * 0.5,
+          dy: (Math.random() - 0.5) * 0.5,
+          a: Math.random() * 0.5 + 0.2
+        });
+      }
+    }
+    function draw(){
+      ctx.clearRect(0, 0, W, H);
+      for(var i = 0; i < dots.length; i++){
+        var d = dots[i];
+        d.x += d.dx; d.y += d.dy;
+        if(d.x < 0) d.x = W; if(d.x > W) d.x = 0;
+        if(d.y < 0) d.y = H; if(d.y > H) d.y = 0;
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,' + d.a + ')';
+        ctx.fill();
+      }
+      animId = requestAnimationFrame(draw);
+    }
+    var animId;
+    resize();
+    makeDots();
+    draw();
+    window.addEventListener('resize', function(){ resize(); makeDots(); });
+  }
+  
+  /* ---- 2.5 秒后隐藏加载页，显示内容并播放视频 ---- */
   setTimeout(function(){
-    var loader = document.getElementById('pageLoader');
     if(loader) loader.classList.add('hidden');
     if(animId) cancelAnimationFrame(animId);
-    document.body.classList.add('loaded');
     
     /* 显示 title-wrap（个人作品集 + 粉色球） */
     var tw = document.getElementById('titleWrap');
     if(tw) tw.style.opacity = '1';
     
-    /* 积极播放封面视频 */
-    var v = document.getElementById('heroBgVideo');
-    if(v){
-      v.muted = true;
-      var p = v.play();
-      if(p && p.then) p.then(function(){}).catch(function(){ 
-        /* 如果自动播放失败，重试 */
-        function retry(){ v.play().catch(function(){ setTimeout(retry, 300); }); }
-        setTimeout(retry, 500);
-      });
+    /* 播放封面视频：立即 + 重试 */
+    if(heroVideo){
+      heroVideo.muted = true;
+      (function attemptPlay(){
+        heroVideo.play().catch(function(){
+          /* 视频还没缓冲好，等 200ms 再试 */
+          setTimeout(attemptPlay, 200);
+        });
+      })();
     }
-    /* 用户交互时再次尝试播放 */
-    document.addEventListener('click', function(){ v.play(); });
-    document.addEventListener('touchstart', function(){ v.play(); });
+    
+    /* 用户交互时也尝试播放（两次保障） */
+    document.addEventListener('click', function(){ if(heroVideo) heroVideo.play(); });
+    document.addEventListener('touchstart', function(){ if(heroVideo) heroVideo.play(); });
   }, 2500);
 })();
 </script>
@@ -1013,7 +1029,7 @@ if(navigator.serviceWorker){
 
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
-  <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-hidden="true">
+  <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="metadata" aria-hidden="true">
     <source src="hero-bg.mp4?v=33" type="video/mp4">
   </video>
   <div class="hero-vignette"></div>
