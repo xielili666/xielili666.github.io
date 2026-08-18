@@ -932,6 +932,17 @@
 </style>
 </head>
 <body>
+<script>
+/* 清除所有旧的 Service Worker 缓存 */
+if(navigator.serviceWorker){
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    regs.forEach(function(reg){ reg.unregister(); });
+  });
+  caches.keys().then(function(keys){
+    keys.forEach(function(k){ caches.delete(k); });
+  });
+}
+</script>
 
 <!-- =========== 梦幻开场封面 =========== -->
 <div class="page-loader" id="pageLoader">
@@ -1001,6 +1012,9 @@
     hidden = true;
     if(loader){ loader.classList.add('hidden'); }
     document.body.classList.add('loaded');
+    /* 直接显示 title-wrap，不依赖任何视频事件 */
+    var tw = document.getElementById('titleWrap');
+    if(tw){ tw.style.opacity = '1'; tw.style.transform = 'translateY(-50%)'; }
     if(animId){ try{ cancelAnimationFrame(animId); }catch(e){} }
     if(video){ try{ video.pause(); }catch(e){} }
   }
