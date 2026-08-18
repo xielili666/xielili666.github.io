@@ -105,45 +105,44 @@
     left:50%;right:50%;
     margin-left:-50vw;margin-right:-50vw;
     background:var(--midnight);
-    overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;
+    overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;
     padding:0;
     z-index:2;
   }
   .hero-media{position:absolute;inset:0;z-index:3;overflow:hidden;background:var(--midnight);width:100vw;height:100vh}
-  /* flat scrim for legibility (Aker: darken via subject, but a flat scrim is allowed) */
-  /* scrim: only darken the lower band so the art stays vivid up top (legibility for text) */
-  .hero-scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(7,7,7,0) 38%,rgba(7,7,7,.18) 62%,rgba(7,7,7,.66) 100%);pointer-events:none}
-  /* Hero text is anchored INSIDE the cover (absolute within .hero, which has
-     overflow:hidden), so it only shows on the cover and scrolls away with it —
-     never floats over / covers the sections below, no fade. */
-  .hero-inner{position:absolute;left:0;right:0;bottom:8vh;z-index:50;width:100%;max-width:none;margin:0 auto;text-align:left;padding:0}
+  .hero-scrim{display:none}
+  /* Hello, I'm 谢丽丽 - 参考截图风格 */
+  .hero-inner{position:relative;z-index:50;width:100%;max-width:var(--page-max);margin:0 auto;text-align:center;padding:0 24px}
 
-  .hero-name{position:relative;display:block;margin:0 0 22px}
-  .hero-name-eyebrow{
-    display:inline-flex;align-items:center;gap:10px;
-    font-family:var(--font-body);font-size:12px;font-weight:500;letter-spacing:.18em;
-    color:rgba(255,255,255,.82);text-transform:uppercase;margin-bottom:20px;
+  .hero-hello{
+    font-family:'Dancing Script','Brush Script MT','Comic Sans MS',cursive;
+    font-style:italic;
+    font-size:clamp(36px,6vw,64px);
+    color:var(--ember);
+    margin:0 0 8px;
+    line-height:1.1;
+    letter-spacing:0;
   }
-  .hero-name-eyebrow .star{color:var(--ember)}
-  .hero-sub{
-    position:relative;z-index:2;
+  .hero-name-large{
     font-family:'Noto Sans SC','HarmonyOS Sans SC','PingFang SC',-apple-system,'Source Han Sans SC','Microsoft YaHei',sans-serif;
-    font-weight:200;
-    font-size:clamp(56px,9vw,128px);
-    line-height:.96;letter-spacing:.04em;
-    color:#fff;margin:0;
-    text-shadow:0 2px 28px rgba(0,0,0,.35);
+    font-weight:900;
+    font-size:clamp(72px,14vw,160px);
+    line-height:1;
+    letter-spacing:.02em;
+    color:#fff;
+    margin:0;
   }
-  .title-wrap{position:relative;display:block}
-  .title-blob{display:none}
-  .hero-meta{
-    display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;
-    padding-top:26px;margin-top:34px;
-    font-size:14px;color:rgba(255,255,255,.82);
+  .hero-role{
+    font-family:var(--font-body);
+    font-size:clamp(13px,2vw,16px);
+    font-weight:400;
+    letter-spacing:.12em;
+    color:rgba(255,255,255,.6);
+    margin:28px 0 0;
+    text-transform:uppercase;
   }
-  .hero-meta .left{font-weight:500;letter-spacing:.02em;max-width:60%;padding-left:24px}
-  .hero-meta .center{display:none}
-  .hero-meta .right{display:flex;gap:14px;align-items:center}
+  /* 旧 hero 元素已移除，保留兼容 */
+  .hero-name,.hero-name-eyebrow,.hero-sub,.title-wrap,.title-blob,.hero-meta{display:none}
   .btn-ghost{
     display:inline-flex;align-items:center;gap:8px;
     padding:12px 22px;border-radius:var(--radius-btn);
@@ -160,15 +159,10 @@
   }
   .btn-solid:hover{background:#9c4a20;transform:translateY(-1px)}
 
-  .hero-cta-right{
-    position:absolute;right:48px;bottom:46px;z-index:51;
-    display:flex;gap:14px;align-items:center;
-  }
-
   .scroll-hint{
     position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
     display:flex;align-items:center;gap:8px;
-    font-size:11px;letter-spacing:.2em;color:rgba(255,255,255,.7);font-weight:500;z-index:5;
+    font-size:11px;letter-spacing:.2em;color:rgba(255,255,255,.5);font-weight:500;z-index:5;
   }
   .scroll-hint .line{display:none}
 
@@ -508,8 +502,10 @@
     .site-header{padding:9px 12px 9px 18px;top:14px;right:14px}
     .nav{display:none}
     section{padding:64px 20px}
-    .hero-inner{padding:0 16px 6vh}
-    .hero-sub{font-size:clamp(48px,14vw,84px)}
+    .hero-inner{padding:0 20px}
+    .hero-hello{font-size:clamp(28px,8vw,44px);margin-bottom:4px}
+    .hero-name-large{font-size:clamp(56px,16vw,96px)}
+    .hero-role{font-size:12px;letter-spacing:.08em;margin-top:18px}
     .about-body{grid-template-columns:1fr;gap:36px}
     .about-card{grid-template-columns:1fr;gap:24px;max-width:880px}
     .about-card-right{padding:26px 22px;grid-template-columns:1fr;gap:18px}
@@ -581,25 +577,11 @@
   <div class="hero-media"></div>
   <div class="hero-scrim"></div>
 
-  <!-- Hero content -->
+  <!-- Hero content: Hello, I'm 谢丽丽 -->
   <div class="hero-inner">
-    <div class="hero-name">
-      <span class="hero-name-eyebrow"><span class="star">✦</span><span>PORTFOLIO 2026</span></span>
-    </div>
-    <div class="title-wrap">
-      <p class="hero-sub">个人作品集</p>
-    </div>
-    <div class="hero-meta">
-      <div class="left">视觉设计师 · AI 设计师 · 品牌设计师</div>
-      <div class="right"></div>
-    </div>
-  </div>
-
-  <div class="hero-cta-right">
-    <a class="btn-ghost" href="#works">查看作品 →</a>
-    <a class="btn-solid" href="#contact">联系我
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M7 7h10v10"/></svg>
-    </a>
+    <p class="hero-hello">Hello, I'm</p>
+    <h1 class="hero-name-large">谢丽丽</h1>
+    <p class="hero-role">视觉设计师 / AI 设计师 / 品牌设计师</p>
   </div>
 
   <div class="scroll-hint">
@@ -1538,7 +1520,7 @@
   /* 注册 Service Worker：让作品图片缓存到本地，重访秒开、不再重新加载 */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js?v=11').catch(function () {});
+      navigator.serviceWorker.register('/sw.js?v=12').catch(function () {});
     });
   }
 </script>
