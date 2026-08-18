@@ -4,7 +4,7 @@
  * 注意：升级时清理所有旧版本缓存（install + activate 都清理），
  *       避免旧 SW 缓存的旧视频残留导致用户一直看到老文件。
  */
-const CACHE = 'xielili-works-v7';
+const CACHE = 'xielili-works-v8';
 
 self.addEventListener('install', (e) => {
   e.waitUntil((async () => {
