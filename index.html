@@ -100,20 +100,16 @@
 
   /* =========== Hero — full-bleed photography =========== */
   .hero{
-    position:relative;width:100vw;height:100vh;min-height:100vh;
-    max-width:none !important;
-    left:50%;right:50%;
-    margin-left:-50vw;margin-right:-50vw;
+    position:relative;width:100%;height:100vh;min-height:100vh;
     background:var(--midnight);
-    overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;
-    padding:0;
+    overflow:hidden;
     z-index:2;
   }
-  .hero-media{position:absolute;inset:0;z-index:3;overflow:hidden;background:var(--midnight);width:100vw;height:100vh}
-  .hero-bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-  .hero-scrim{position:absolute;inset:0;z-index:4;background:linear-gradient(180deg,rgba(7,7,7,.25) 0%,rgba(7,7,7,.45) 55%,rgba(7,7,7,.72) 100%);pointer-events:none}
+  .hero-media{position:absolute;top:0;left:0;width:100%;height:100%;z-index:3;overflow:hidden;background:var(--midnight)}
+  .hero-bg-video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;background:var(--midnight)}
+  .hero-scrim{position:absolute;top:0;left:0;width:100%;height:100%;z-index:4;background:linear-gradient(180deg,rgba(7,7,7,.25) 0%,rgba(7,7,7,.45) 55%,rgba(7,7,7,.72) 100%);pointer-events:none}
   /* Hello, I'm 谢丽丽 - 左下角 */
-  .hero-inner{position:relative;z-index:50;width:100%;max-width:var(--page-max);margin:0 auto;text-align:left;padding:0 48px 10vh}
+  .hero-inner{position:absolute;left:0;right:0;bottom:0;z-index:50;width:100%;max-width:var(--page-max);margin:0 auto;text-align:left;padding:0 48px 10vh}
 
   .hero-hello{
     font-family:'Dancing Script','Brush Script MT','Comic Sans MS',cursive;
@@ -169,6 +165,7 @@
 
   /* =========== Sections =========== */
   section{position:relative;padding:var(--section-gap) 40px;max-width:var(--page-max);margin:0 auto}
+  section.hero{max-width:none;padding:0;margin:0}
   .section-eyebrow{
     display:inline-flex;align-items:center;gap:10px;
     font-family:var(--font-body);font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
@@ -503,7 +500,7 @@
     .site-header{padding:9px 12px 9px 18px;top:14px;right:14px}
     .nav{display:none}
     section{padding:64px 20px}
-    .hero-inner{padding:0 20px 8vh}
+    .hero-inner{padding:0 20px 8vh;left:0;right:0}
     .hero-hello{font-size:clamp(26px,7vw,40px);margin-bottom:4px}
     .hero-name-large{font-size:clamp(48px,13vw,80px)}
     .hero-role{font-size:12px;letter-spacing:.08em;margin-top:14px}
@@ -576,8 +573,8 @@
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
   <div class="hero-media">
-    <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline x5-playsinline preload="auto" poster="works/hero-poster.jpg?v=13" aria-hidden="true">
-      <source src="works/hero-cover.mp4?v=13" type="video/mp4">
+    <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline x5-playsinline preload="auto" poster="works/hero-poster.jpg?v=14" aria-hidden="true">
+      <source src="works/hero-cover.mp4?v=14" type="video/mp4">
     </video>
   </div>
   <div class="hero-scrim"></div>
@@ -1539,7 +1536,7 @@
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js?v=13').catch(function () {});
+      navigator.serviceWorker.register('/sw.js?v=14').catch(function () {});
     });
   }
 </script>
