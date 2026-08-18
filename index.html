@@ -131,7 +131,7 @@
     transition:opacity 1.2s cubic-bezier(.2,.7,.2,1),transform 1.2s ease;
   }
   body.loaded .site-header.hero-on{opacity:1;transform:translateY(0);transition-delay:0s}
-  body.video-played .title-wrap{opacity:1;transform:translateY(-50%);transition-delay:0s}
+  body.loaded .title-wrap{opacity:1;transform:translateY(-50%);transition-delay:.5s}
   body.loaded .hero-inner{opacity:1;transform:translateY(0);transition-delay:.5s}
   body.loaded .scroll-hint{opacity:1;transform:translateY(0);transition-delay:1s}
 
@@ -1004,17 +1004,13 @@
     if(animId){ try{ cancelAnimationFrame(animId); }catch(e){} }
     if(video){ try{ video.pause(); }catch(e){} }
   }
-  /* 封面视频播放：加载页消失后确保视频正在播放（不调用 load() 以免重置） */
+  /* 封面视频播放：加载页消失后确保视频正在播放 */
   function ensureHeroVideoPlaying(){
     var heroVideo = document.getElementById('heroBgVideo');
     if(!heroVideo) return;
     heroVideo.muted = true;
     var p = heroVideo.play();
-    if(p && p.catch){ p.catch(function(){ setTimeout(function(){ try{ heroVideo.play(); }catch(e){} }, 300); }); }
-    /* 视频开始播放5秒后显示标题文字和粉色小球 */
-    heroVideo.addEventListener('playing', function(){
-      setTimeout(function(){ document.body.classList.add('video-played'); }, 5000);
-    }, { once: true });
+    if(p && p.catch){ p.catch(function(){ setTimeout(function(){ try{ heroVideo.play(); }catch(e){} }, 500); }); }
   }
   setTimeout(function(){ hide(); ensureHeroVideoPlaying(); }, 2500);
 })();
