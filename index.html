@@ -869,18 +869,23 @@ if(navigator.serviceWorker){
 <!-- 无加载页，内容直出 -->
 
 <script>
-/* 注册 Service Worker 缓存，二次访问快速加载 */
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(function(){}); }
-
-/* 页面初始化：没有加载页，直接显示内容 */
+/* 页面初始化：直接显示内容，积极播放视频 */
 document.body.classList.add('loaded');
-/* 确保封面视频播放 */
+
+/* 积极尝试播放封面视频 */
 (function(){
   var v = document.getElementById('heroBgVideo');
-  if(v){
+  if(!v) return;
+  function forcePlay(){
+    v.muted = true;
     var p = v.play();
-    if(p && p.catch) p.catch(function(){ setTimeout(function(){ try{ v.play(); }catch(e){} }, 300); });
+    if(p && p.then) p.then(function(){}).catch(function(){ setTimeout(forcePlay, 200); });
   }
+  forcePlay();
+  /* 用户点击/触摸页面时再次尝试 */
+  document.addEventListener('click', forcePlay);
+  document.addEventListener('touchstart', forcePlay);
+  document.addEventListener('scroll', function(){ v.play(); });
 })();
 </script>
 
@@ -911,7 +916,7 @@ document.body.classList.add('loaded');
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
   <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-hidden="true">
-    <source src="hero-bg.mp4?v=31" type="video/mp4">
+    <source src="hero-bg.mp4?v=32" type="video/mp4">
   </video>
   <div class="hero-vignette"></div>
 
