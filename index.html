@@ -91,20 +91,9 @@
     padding:120px 40px 7vh;
   }
   /* Three.js 画布：实时渲染陨石+尘埃带+星云+lens flare，背景透明让 CSS 紫色透过来 */
-  .hero-media{
-    position:absolute;inset:0;z-index:0;
-    overflow:hidden;
-    background:#0a0626;  /* 紫底 fallback，视频加载前/失败时显示 */
-  }
   .hero-bg-video{
-    position:absolute;inset:0;z-index:0;
-    width:100%;height:100%;
-    object-fit:cover;
-    display:block;
-    pointer-events:none;
-    
-    transform:translateZ(0);
-    
+    position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;
+    object-fit:cover;pointer-events:none;display:block;
   }
   .bg-sparkles{
     position:fixed;inset:0;z-index:0;pointer-events:none;
@@ -1012,21 +1001,50 @@ if(navigator.serviceWorker){
     hidden = true;
     if(loader){ loader.classList.add('hidden'); }
     document.body.classList.add('loaded');
-    /* 直接显示 title-wrap，不依赖任何视频事件 */
+    /* 直接显示 title-wrap */
     var tw = document.getElementById('titleWrap');
     if(tw){ tw.style.opacity = '1'; tw.style.transform = 'translateY(-50%)'; }
     if(animId){ try{ cancelAnimationFrame(animId); }catch(e){} }
     if(video){ try{ video.pause(); }catch(e){} }
   }
-  /* 封面视频播放：加载页消失后确保视频正在播放 */
-  function ensureHeroVideoPlaying(){
-    var heroVideo = document.getElementById('heroBgVideo');
-    if(!heroVideo) return;
-    heroVideo.muted = true;
-    var p = heroVideo.play();
-    if(p && p.catch){ p.catch(function(){ setTimeout(function(){ try{ heroVideo.play(); }catch(e){} }, 500); }); }
+  
+  /* 在加载页期间预创建封面视频，让浏览器提前下载 */
+  var heroVideo = document.createElement('video');
+  heroVideo.className = 'hero-bg-video';
+  heroVideo.id = 'heroBgVideo';
+  heroVideo.muted = true;
+  heroVideo.loop = true;
+  heroVideo.playsInline = true;
+  heroVideo.setAttribute('playsinline', '');
+  heroVideo.setAttribute('webkit-playsinline', '');
+  heroVideo.setAttribute('aria-hidden', 'true');
+  heroVideo.innerHTML = '<source src="hero-bg.mp4?v=29" type="video/mp4">';
+  /* 开始加载（不播放，只加载） */
+  heroVideo.load();
+  /* 标记播放状态，防止重复调用 */
+  var heroVideoPlaying = false;
+  
+  /* 加载页消失后：把视频添加到页面并播放 */
+  function playHeroVideo(){
+    if(heroVideoPlaying) return;
+    heroVideoPlaying = true;
+    /* 把视频插入到 hero 内部最前面，作为背景 */
+    var top = document.getElementById('top');
+    if(top && heroVideo.parentNode !== top){
+      top.insertBefore(heroVideo, top.firstChild);
+    }
+    /* 尝试播放 */
+    function tryPlay(){
+      var p = heroVideo.play();
+      if(p && p.then){
+        p.then(function(){}).catch(function(){
+          setTimeout(tryPlay, 200);
+        });
+      }
+    }
+    tryPlay();
   }
-  setTimeout(function(){ hide(); ensureHeroVideoPlaying(); }, 2500);
+  setTimeout(function(){ hide(); playHeroVideo(); }, 2500);
 })();
 </script>
 
@@ -1056,12 +1074,6 @@ if(navigator.serviceWorker){
 
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
-  <!-- 封面视频背景：用户提供的 AI 短剧片段，提升至 1920×1080 无水印循环播放 -->
-  <div class="hero-media">
-    <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-hidden="true">
-      <source src="hero-bg.mp4?v=28" type="video/mp4">
-    </video>
-  </div>
   <div class="hero-vignette"></div>
 
   <!-- Floating particles -->
