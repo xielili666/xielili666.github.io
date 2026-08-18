@@ -489,12 +489,13 @@
   .work-section[data-cat='电商设计'] .work{
     aspect-ratio:1/1;
   }
-  /* IP形象设计分组：设计板为 16:9 宽幅，contain 展示完整内容 */
+  /* IP形象设计分组：设计板为 16:9 宽幅，cover 铺满卡片，顶部居中保留角色头部 */
   .work-section[data-cat='IP形象设计'] .work{
     aspect-ratio:16/9;
   }
   .work-section[data-cat='IP形象设计'] .work-poster{
-    object-fit:contain;
+    object-fit:cover;
+    object-position:center top;
   }
   .work-section-title{
     display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
@@ -890,6 +891,10 @@
   }
 
   </style>
+  <!-- 预加载 IP 形象设计大图，避免懒加载导致首屏留白 -->
+  <link rel="preload" as="image" href="ip-pearl-sweetie.jpg">
+  <link rel="preload" as="image" href="ip-stella-lulu.jpg">
+  <link rel="preload" as="image" href="ip-mint-jasmine.jpg">
 </head>
 <body>
 <script>
@@ -1537,7 +1542,8 @@ if(navigator.serviceWorker){
       } else if (w.coverVideo) {
         mediaHtml = '<video class="work-poster" src="' + w.video + '" autoplay muted loop playsinline preload="metadata"></video>';
       } else {
-        mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" loading="lazy" onerror="this.onerror=null;this.style.opacity=\'.25\';this.parentElement.classList.add(\'poster-error\')">';
+        const lazyAttr = (w.cat === 'IP形象设计') ? '' : ' loading="lazy"';
+        mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '"' + lazyAttr + ' onerror="this.onerror=null;this.style.opacity=\'.25\';this.parentElement.classList.add(\'poster-error\')">';
       }
       card.innerHTML =
         (w.vertical ? '<span class="work-916-badge">9:16 · 信息流</span>' : '') +
