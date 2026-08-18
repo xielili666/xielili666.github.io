@@ -552,6 +552,26 @@
 <canvas id="starfield" class="starfield" aria-hidden="true"></canvas>
 <div id="particles" aria-hidden="true"></div>
 
+<div class="preloader" id="preloader" aria-hidden="true">
+  <video class="preloader-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+    <source src="works/hero-cover.mp4?v=4" type="video/mp4">
+  </video>
+  <div class="preloader-scrim" aria-hidden="true"></div>
+  <div class="preloader-inner">
+    <div class="preloader-ring-wrap" aria-hidden="true">
+      <svg class="preloader-ring" viewBox="0 0 64 64" aria-hidden="true">
+        <circle class="ring-outer" cx="32" cy="32" r="28"/>
+        <circle class="ring-arc"   cx="32" cy="32" r="22"/>
+        <circle class="ring-dot"   cx="54" cy="32" r="1.6"/>
+      </svg>
+    </div>
+    <div class="preloader-text">
+      <p class="preloader-name">谢丽丽 · 作品集</p>
+      <span class="preloader-rule" aria-hidden="true"></span>
+    </div>
+  </div>
+</div>
+
 <!-- =========== Header =========== -->
 <header class="site-header hero-on" id="siteHeader">
   <div class="brand">
@@ -576,8 +596,8 @@
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
   <div class="hero-media">
-    <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline preload="auto" poster="works/hero-poster.jpg?v=1" aria-hidden="true">
-      <source src="works/hero-cover.mp4?v=3" type="video/mp4">
+    <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline preload="auto" poster="works/hero-poster.jpg?v=2" aria-hidden="true">
+      <source src="works/hero-cover.mp4?v=4" type="video/mp4">
     </video>
   </div>
   <div class="hero-scrim"></div>
