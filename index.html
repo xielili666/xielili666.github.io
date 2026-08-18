@@ -922,14 +922,10 @@ if(navigator.serviceWorker){
   var heroVideo = document.getElementById('heroBgVideo');
   
   /* ---- 预加载封面视频 ---- */
-  var heroVideoSrc = 'hero-bg.mp4?v=33';
+  var heroVideoSrc = 'hero-bg.mp4?v=34';
   if(heroVideo){
-    /* 用 fetch 提前下载视频到浏览器缓存，2.5秒后直接播放 */
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', heroVideoSrc, true);
-    xhr.responseType = 'blob';
-    xhr.send();
-    /* 同时触发 video 元素开始缓冲 */
+    /* preload="auto" 让浏览器自动下载视频 */
+    /* 明确设置 src 确保浏览器开始下载 */
     heroVideo.src = heroVideoSrc;
     heroVideo.load();
   }
@@ -985,15 +981,23 @@ if(navigator.serviceWorker){
     var tw = document.getElementById('titleWrap');
     if(tw) tw.style.opacity = '1';
     
-    /* 播放封面视频：立即 + 重试 */
+    /* 播放封面视频：一旦可播放就开始 */
     if(heroVideo){
       heroVideo.muted = true;
-      (function attemptPlay(){
-        heroVideo.play().catch(function(){
-          /* 视频还没缓冲好，等 200ms 再试 */
-          setTimeout(attemptPlay, 200);
-        });
-      })();
+      /* 如果视频已缓冲好，直接播放 */
+      var p = heroVideo.play();
+      if(p) p.catch(function(){
+        /* 还没缓冲好，等 canplay 事件 */
+        function onCanplay(){
+          heroVideo.play();
+          heroVideo.removeEventListener('canplay', onCanplay);
+        }
+        heroVideo.addEventListener('canplay', onCanplay);
+        /* 同时继续重试 */
+        (function retry(){
+          heroVideo.play().catch(function(){ setTimeout(retry, 300); });
+        })();
+      });
     }
     
     /* 用户交互时也尝试播放（两次保障） */
@@ -1029,8 +1033,8 @@ if(navigator.serviceWorker){
 
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
-  <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="metadata" aria-hidden="true">
-    <source src="hero-bg.mp4?v=33" type="video/mp4">
+  <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-hidden="true">
+    <source src="hero-bg.mp4?v=34" type="video/mp4">
   </video>
   <div class="hero-vignette"></div>
 
