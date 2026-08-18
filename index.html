@@ -576,7 +576,7 @@
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
   <div class="hero-media">
-    <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+    <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline preload="auto" poster="works/hero-poster.jpg?v=1" aria-hidden="true">
       <source src="works/hero-cover.mp4?v=3" type="video/mp4">
     </video>
   </div>
@@ -1533,6 +1533,27 @@
     if (reduce && raf) cancelAnimationFrame(raf);
   })();
 
+</script>
+
+<script>
+  /* Hero 封面视频：强制自动播放，避免部分浏览器默认拦截导致黑屏 */
+  (function(){
+    var v = document.getElementById('heroBgVideo');
+    if (!v) return;
+    function tryPlay(){
+      if (v.paused) {
+        v.play().catch(function(){});
+      }
+    }
+    v.addEventListener('loadedmetadata', tryPlay);
+    v.addEventListener('canplay', tryPlay);
+    v.addEventListener('pause', tryPlay);
+    window.addEventListener('load', tryPlay);
+    document.addEventListener('visibilitychange', function(){
+      if (!document.hidden) tryPlay();
+    });
+    tryPlay();
+  })();
 </script>
 
 <script>
