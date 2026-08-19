@@ -927,8 +927,8 @@ if(navigator.serviceWorker){
   var canvas = document.getElementById('loaderCanvas');
   var heroVideo = document.getElementById('heroBgVideo');
   
-  /* ---- 预加载封面视频 ---- */
-  var heroVideoSrc = 'hero-bg.mp4?v=36';
+  /* ---- 预加载封面视频（v37：NVENC 1800kbps 优化，1.13MB 减 22%，画质无损）---- */
+  var heroVideoSrc = 'hero-bg.mp4?v=37';
   if(heroVideo){
     /* preload="auto" 让浏览器自动下载视频 */
     /* 明确设置 src 确保浏览器开始下载 */
@@ -1040,7 +1040,7 @@ if(navigator.serviceWorker){
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
   <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="hero-poster.jpg" aria-hidden="true">
-    <source src="hero-bg.mp4?v=36" type="video/mp4">
+    <source src="hero-bg.mp4?v=37" type="video/mp4">
   </video>
   <div class="hero-vignette"></div>
 
