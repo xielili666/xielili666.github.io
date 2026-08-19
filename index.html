@@ -928,7 +928,7 @@ if(navigator.serviceWorker){
   var heroVideo = document.getElementById('heroBgVideo');
   
   /* ---- 预加载封面视频 ---- */
-  var heroVideoSrc = 'hero-bg.mp4?v=34';
+  var heroVideoSrc = 'hero-bg.mp4?v=35';
   if(heroVideo){
     /* preload="auto" 让浏览器自动下载视频 */
     /* 明确设置 src 确保浏览器开始下载 */
@@ -1040,7 +1040,7 @@ if(navigator.serviceWorker){
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
   <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="hero-poster.jpg" aria-hidden="true">
-    <source src="hero-bg.mp4?v=34" type="video/mp4">
+    <source src="hero-bg.mp4?v=35" type="video/mp4">
   </video>
   <div class="hero-vignette"></div>
 
@@ -1519,6 +1519,20 @@ if(navigator.serviceWorker){
       grid.appendChild(sec);
     });
 
+    // 电商封面视频：滚动进入视口才播放，离开即暂停；首屏不再多路视频同时抢带宽
+    setTimeout(() => {
+      const lazyVids = document.querySelectorAll('.lazy-video');
+      if(!('IntersectionObserver' in window) || !lazyVids.length) return;
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          const v = e.target;
+          if(e.isIntersecting){ const p = v.play(); if(p && p.catch) p.catch(()=>{}); }
+          else { v.pause(); }
+        });
+      }, { threshold: 0.15, rootMargin: '150px 0px' });
+      lazyVids.forEach(v => io.observe(v));
+    }, 0);
+
     function buildCard(w, i, spans){
       const card = document.createElement('div');
       card.className = 'work ' + (w.vertical ? 'vertical' : (spans[i] || 'span4'));
@@ -1541,10 +1555,10 @@ if(navigator.serviceWorker){
         }).join('') + '</div>';
       } else if (w.coverVideo) {
         const coverSrc = (w.coverVideo === true) ? w.video : w.coverVideo;
-        mediaHtml = '<video class="work-poster" src="' + coverSrc + '" poster="' + (w.poster||'') + '" autoplay muted loop playsinline preload="metadata" playsInline webkit-playsinline x5-playsinline onerror="this.onerror=null;this.style.display=\'none\';this.parentElement.classList.add(\'poster-error\')"></video>';
+        mediaHtml = '<video class="work-poster lazy-video" src="' + coverSrc + '" poster="' + (w.poster||'') + '" muted loop playsinline preload="none" onerror="this.onerror=null;this.style.display=\'none\';this.parentElement.classList.add(\'poster-error\')"></video>';
       } else {
         const lazyAttr = (w.cat === 'IP形象设计') ? '' : ' loading="lazy"';
-        mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '"' + lazyAttr + ' onerror="this.onerror=null;this.style.opacity=\'.25\';this.parentElement.classList.add(\'poster-error\')">';
+        mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '"' + lazyAttr + ' decoding="async" onerror="this.onerror=null;this.style.opacity=\'.25\';this.parentElement.classList.add(\'poster-error\')">';
       }
       card.innerHTML =
         (w.vertical ? '<span class="work-916-badge">9:16 · 信息流</span>' : '') +
@@ -1585,7 +1599,7 @@ if(navigator.serviceWorker){
         '<div class="work-showcase-right">' +
           '<div class="work-showcase-video" data-index="'+i+'">' +
             '<span class="work-showcase-video-label">'+(w.showcaseLabel || 'AI 短剧 · 正片')+'</span>' +
-            '<img src="'+w.poster+'" alt="'+w.title+'" loading="lazy" onerror="this.onerror=null;this.style.opacity=\'.25\';this.parentElement.classList.add(\'poster-error\')">' +
+            '<img src="'+w.poster+'" alt="'+w.title+'" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.opacity=\'.25\';this.parentElement.classList.add(\'poster-error\')">' +
             '<video src="'+w.video+'" muted loop playsinline preload="metadata"></video>' +
           '</div>' +
         '</div>';
