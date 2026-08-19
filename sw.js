@@ -4,22 +4,20 @@
  * 注意：升级时清理所有旧版本缓存（install + activate 都清理），
  *       避免旧 SW 缓存的旧视频残留导致用户一直看到老文件。
  */
-const CACHE = 'xielili-works-v20';
+const CACHE = 'xielili-works-v21';
 
 self.addEventListener('install', (e) => {
   e.waitUntil((async () => {
-    // 安装新 SW 时清掉所有旧缓存
-    const keys = await caches.keys();
-    await Promise.all(keys.map((k) => caches.delete(k)));
+    // 不再主动清空旧缓存：每次升级用新的 ?v=N URL，旧缓存不会覆盖新文件，
+    // 反而能在网络失败时作为兜底，避免黑屏/空白。
     await self.skipWaiting();
   })());
 });
 
 self.addEventListener('activate', (e) => {
   e.waitUntil((async () => {
-    // 接管客户端时再次清理所有非当前缓存，确保 v1/v2/v3 全部清除
-    const keys = await caches.keys();
-    await Promise.all(keys.map((k) => (k !== CACHE ? caches.delete(k) : null)));
+    // 保留旧缓存作兜底，避免网络抽风时资源完全无法加载。
+    // 当缓存占用过大时可手动清理，但正常 ?v=N 升级会自然隔离旧版本。
     await self.clients.claim();
   })());
 });
