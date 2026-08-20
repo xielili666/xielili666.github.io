@@ -10,6 +10,7 @@
 <meta property="og:title" content="谢丽丽 XIE LILI (xielili) · 个人作品集" />
 <meta property="og:description" content="谢丽丽 / XIE LILI (xielili) 视觉设计师作品集 —— AI 短剧、TVC、电商视觉等。" />
 <meta name="author" content="xielili 谢丽丽" />
+<link rel="preload" href="https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/hero-bg.mp4?v=42" as="video" type="video/mp4">
 
 <style>
   /* =========== Reset & Base =========== */
@@ -922,7 +923,7 @@ if(navigator.serviceWorker){
   var heroVideo = document.getElementById('heroBgVideo');
   
   /* ---- 预加载封面视频 ---- */
-  var heroVideoSrc = 'https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/hero-bg.mp4?v=40';
+  var heroVideoSrc = 'https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/hero-bg.mp4?v=42';
   if(heroVideo){
     /* preload="auto" 让浏览器自动下载视频 */
     /* 明确设置 src 确保浏览器开始下载 */
@@ -984,25 +985,29 @@ if(navigator.serviceWorker){
     /* 播放封面视频：一旦可播放就开始 */
     if(heroVideo){
       heroVideo.muted = true;
-      /* 如果视频已缓冲好，直接播放 */
-      var p = heroVideo.play();
-      if(p) p.catch(function(){
-        /* 还没缓冲好，等 canplay 事件 */
-        function onCanplay(){
-          heroVideo.play();
-          heroVideo.removeEventListener('canplay', onCanplay);
-        }
-        heroVideo.addEventListener('canplay', onCanplay);
-        /* 同时继续重试 */
-        (function retry(){
-          heroVideo.play().catch(function(){ setTimeout(retry, 300); });
-        })();
+      function tryPlay(){
+        var p = heroVideo.play();
+        if(p) p.catch(function(){});
+      }
+      tryPlay();
+      /* 如果还没准备好，等 canplaythrough（确保流畅播放） */
+      heroVideo.addEventListener('canplaythrough', function onReady(){
+        tryPlay();
+        heroVideo.removeEventListener('canplaythrough', onReady);
       });
+      /* 持续重试直到播放成功 */
+      (function retry(){
+        if(!heroVideo.paused) return;
+        tryPlay();
+        setTimeout(retry, 500);
+      })();
     }
     
-    /* 用户交互时也尝试播放（两次保障） */
-    document.addEventListener('click', function(){ if(heroVideo) heroVideo.play(); });
-    document.addEventListener('touchstart', function(){ if(heroVideo) heroVideo.play(); });
+    /* 用户交互时也尝试播放（多次保障） */
+    function userPlay(){ if(heroVideo && heroVideo.paused) heroVideo.play().catch(function(){}); }
+    document.addEventListener('click', userPlay);
+    document.addEventListener('touchstart', userPlay);
+    document.addEventListener('scroll', userPlay);
   }, 2500);
 })();
 </script>
@@ -1034,7 +1039,8 @@ if(navigator.serviceWorker){
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
   <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-hidden="true">
-    <source src="https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/hero-bg.mp4?v=40" type="video/mp4">
+    <source src="https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/hero-bg.mp4?v=42" type="video/mp4">
+    <source src="https://xielili666.github.io/hero-bg.mp4?v=42" type="video/mp4">
   </video>
   <div class="hero-vignette"></div>
 
