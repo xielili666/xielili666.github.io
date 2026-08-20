@@ -7,7 +7,7 @@
 <meta property="og:title" content="谢丽丽 XIE LILI (xielili) · 个人作品集" />
 <meta property="og:description" content="谢丽丽 / XIE LILI (xielili) 视觉设计师作品集 —— AI 短剧、TVC、电商视觉等。" />
 <meta name="author" content="xielili 谢丽丽" />
-<link rel="preload" as="video" href="https://fastly.jsdelivr.net/gh/xielili666/xielili666.github.io@main/works/hero-cover.mp4?v=46" crossorigin="anonymous">
+<link rel="preload" as="video" href="https://fastly.jsdelivr.net/gh/xielili666/xielili666.github.io@main/works/hero-lite.mp4?v=47" crossorigin="anonymous">
 
 <style>
   /* =========== Reset & Base =========== */
@@ -974,20 +974,13 @@ if(navigator.serviceWorker){
     var heroVideo = document.getElementById('heroBgVideo');
     if(heroVideo){
       heroVideo.muted = true;
-      /* 如果视频已缓冲好，直接播放 */
-      var p = heroVideo.play();
-      if(p) p.catch(function(){
-        /* 还没缓冲好，等 canplay 事件 */
-        function onCanplay(){
-          heroVideo.play();
-          heroVideo.removeEventListener('canplay', onCanplay);
-        }
-        heroVideo.addEventListener('canplay', onCanplay);
-        /* 同时继续重试 */
-        (function retry(){
-          heroVideo.play().catch(function(){ setTimeout(retry, 300); });
-        })();
-      });
+      /* 等缓冲充足再播放，避免开头缓冲卡顿；缓冲不足则等在 canplaythrough */
+      function tryPlay(){
+        heroVideo.play().catch(function(){
+          heroVideo.addEventListener('canplaythrough', tryPlay, { once:true });
+        });
+      }
+      tryPlay();
     }
     
     /* CDN 容错：5秒后如果视频没开始播放，逐个切换 source */
@@ -1000,8 +993,8 @@ if(navigator.serviceWorker){
       heroVideo.src = cdnSources[fbIdx];
       heroVideo.load();
       heroVideo.play().catch(function(){});
-      setTimeout(cdnFallback, 5000);
-    }, 5000);
+      setTimeout(cdnFallback, 4000);
+    }, 4000);
 
     /* 用户交互时也尝试播放 */
     function userPlay(){ var v = document.getElementById('heroBgVideo'); if(v && v.paused) v.play().catch(function(){}); }
@@ -1039,9 +1032,9 @@ if(navigator.serviceWorker){
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
   <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="works/hero-poster.jpg" aria-hidden="true">
-    <source src="https://fastly.jsdelivr.net/gh/xielili666/xielili666.github.io@main/works/hero-cover.mp4?v=46" type="video/mp4">
-    <source src="https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/works/hero-cover.mp4?v=46" type="video/mp4">
-    <source src="works/hero-cover.mp4?v=46" type="video/mp4">
+    <source src="https://fastly.jsdelivr.net/gh/xielili666/xielili666.github.io@main/works/hero-lite.mp4?v=47" type="video/mp4">
+    <source src="https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/works/hero-cover.mp4?v=47" type="video/mp4">
+    <source src="works/hero-cover.mp4?v=47" type="video/mp4">
   </video>
   <div class="hero-vignette"></div>
 
