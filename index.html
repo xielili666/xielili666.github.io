@@ -7,7 +7,7 @@
 <meta property="og:title" content="谢丽丽 XIE LILI (xielili) · 个人作品集" />
 <meta property="og:description" content="谢丽丽 / XIE LILI (xielili) 视觉设计师作品集 —— AI 短剧、TVC、电商视觉等。" />
 <meta name="author" content="xielili 谢丽丽" />
-<link rel="preload" as="image" href="works/hero-poster.jpg?v=48" fetchpriority="high">
+<link rel="preload" as="video" href="https://fastly.jsdelivr.net/gh/xielili666/xielili666.github.io@main/works/cover-hd.mp4?v=49" crossorigin="anonymous" fetchpriority="high">
 
 <style>
   /* =========== Reset & Base =========== */
@@ -137,9 +137,7 @@
   }
   .bg-sparkles.is-active{opacity:.55}
   .hero-bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.hero-slider{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;background:#17081f}
-.hero-slide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.06);transition:opacity 1.3s ease,transform 1.3s ease;will-change:opacity}
-.hero-slide.is-active{opacity:1;transform:scale(1)}
+.hero-bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:#17081f}
 .hero{background-image:url("works/hero-poster.jpg");background-size:cover;background-position:center}
 .hero-vignette{
     position:absolute;inset:0;z-index:3;pointer-events:none;
@@ -973,28 +971,23 @@ if(navigator.serviceWorker){
     var tw = document.getElementById('titleWrap');
     if(tw) tw.style.opacity = '1';
     
-    /* 封面海报轮播：轻量图片，彻底告别视频缓冲卡顿 */
-    var heroSlides = document.querySelectorAll('#heroSlider .hero-slide');
-    if(heroSlides.length > 1){
-      var hsIdx = 0;
-      var hsTimer = null;
-      function hsStart(){
-        if(hsTimer) return;
-        hsTimer = setInterval(function(){
-          heroSlides[hsIdx].classList.remove('is-active');
-          hsIdx = (hsIdx + 1) % heroSlides.length;
-          heroSlides[hsIdx].classList.add('is-active');
-        }, 5500);
+    /* 封面高清视频：加载页期间已 preload，等缓冲充足再播，避免开头卡顿 */
+    var heroVideo = document.getElementById('heroBgVideo');
+    if(heroVideo){
+      heroVideo.muted = true;
+      function tryPlay(){
+        var pp = heroVideo.play();
+        if(pp && pp.then){ pp.catch(function(){
+          heroVideo.addEventListener('canplaythrough', tryPlay, { once:true });
+        }); }
       }
-      function hsStop(){ clearInterval(hsTimer); hsTimer = null; }
-      /* 滚出封面时暂停轮播，节省资源；回到封面自动恢复 */
-      var hsCtx = heroSlides[0].parentNode;
-      if('IntersectionObserver' in window && hsCtx){
+      setTimeout(tryPlay, 300);
+      /* 滚出封面时暂停，回来自动继续，节省资源 */
+      if('IntersectionObserver' in window){
         new IntersectionObserver(function(entries){
-          entries.forEach(function(en){ en.isIntersecting ? hsStart() : hsStop(); });
-        }, { threshold: 0.15 }).observe(hsCtx);
+          entries.forEach(function(en){ if(en.isIntersecting){ heroVideo.play().catch(function(){}); } else { heroVideo.pause(); } });
+        }, { threshold: 0.05 }).observe(document.querySelector('.hero') || heroVideo.parentNode);
       }
-      hsStart();
     }
   }, 2500);
 })();
@@ -1026,10 +1019,11 @@ if(navigator.serviceWorker){
 
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
-  <div class="hero-slider" id="heroSlider" aria-hidden="true">
-    <img class="hero-slide is-active" src="works/hero-poster.jpg?v=48" alt="" loading="eager" fetchpriority="high" draggable="false">
-    <img class="hero-slide" src="works/hero-animated.webp?v=48" alt="" loading="eager" draggable="false">
-  </div>
+  <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="works/hero-poster.jpg" aria-hidden="true">
+    <source src="https://fastly.jsdelivr.net/gh/xielili666/xielili666.github.io@main/works/cover-hd.mp4?v=49" type="video/mp4">
+    <source src="https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/works/cover-hd.mp4?v=49" type="video/mp4">
+    <source src="works/cover-hd.mp4?v=49" type="video/mp4">
+  </video>
   <div class="hero-vignette"></div>
 
   <!-- Floating particles -->
