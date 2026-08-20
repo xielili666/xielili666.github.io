@@ -556,8 +556,8 @@
   .work-ep-tag.is-trailer::before{background:#fff;color:#fff}
   .work-ep-tag.is-other{background:rgba(124,109,240,.92);color:#fff}
   .work-ep-tag.is-other::before{background:#fff;color:#fff}
-  .work-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
-  .work:hover .work-poster{transform:scale(1.07)}
+  .work-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s cubic-bezier(.2,.7,.2,1)}.work-poster-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .35s ease}.work-grid{content-visibility:auto;contain-intrinsic-size:auto 600px}
+  .work:hover .work-poster{transform:scale(1.04)}
   /* 作品卡：双视频并排铺开预览（替代单图 poster） */
   .work-ep-grid{position:absolute;inset:0;display:flex;background:#f0eee9}
   .work-ep-cell{position:relative;flex:1 1 0;overflow:hidden;background:#f0eee9}
@@ -922,7 +922,7 @@ if(navigator.serviceWorker){
   /* ---- Canvas 粒子动画 ---- */
   var ctx = canvas ? canvas.getContext('2d') : null;
   var W, H, dots = [];
-  if(ctx){
+  if(ctx && false){
     function resize(){
       W = window.innerWidth; H = window.innerHeight;
       canvas.width = W; canvas.height = H;
@@ -1537,11 +1537,11 @@ if(navigator.serviceWorker){
           else if(/预告|trailer|preview/i.test(lab)) { cls = 'is-trailer'; order = -1; }
           return '<div class="work-ep-cell ' + cls + '" style="order:' + order + '">' +
                    '<span class="work-ep-cell-label tl ' + cls + '">' + lab + '</span>' +
-                   '<video src="' + ep.src + '" autoplay muted loop playsinline preload="metadata"></video>' +
+                   '<video src="' + ep.src + '" muted loop playsinline preload="none"></video>' +
                  '</div>';
         }).join('') + '</div>';
       } else if (w.coverVideo) {
-        mediaHtml = '<video class="work-poster" src="' + w.video + '" autoplay muted loop playsinline preload="metadata"></video>';
+        mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" loading="lazy"><video class="work-poster-video" src="' + w.video + '" muted loop playsinline preload="none"></video>';
       } else {
         mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" loading="lazy">';
       }
@@ -1593,11 +1593,12 @@ if(navigator.serviceWorker){
       const video = el.querySelector('.work-showcase-video video');
       const poster = el.querySelector('.work-showcase-video img');
       if(w.coverVideo && video){
-        video.autoplay = true; video.muted = true; video.loop = true; video.playsInline = true;
+        video.muted = true; video.loop = true; video.playsInline = true;
         video.style.transition = 'opacity .35s ease';
-        video.style.opacity = '1';
-        if(poster){ poster.style.opacity = '0'; }
-        video.play().catch(()=>{});
+        video.style.opacity = '0';
+        if(poster){ poster.style.opacity = '1'; }
+        videoBox.addEventListener('mouseenter', () => { video.play().catch(()=>{}); poster.style.opacity='0'; video.style.opacity='1'; });
+        videoBox.addEventListener('mouseleave', () => { video.pause(); video.currentTime=0; poster.style.opacity='1'; video.style.opacity='0'; });
       } else if(videoBox && video && poster){
         poster.style.transition = 'opacity .35s ease';
         poster.style.opacity = '1';
@@ -1905,7 +1906,7 @@ if(navigator.serviceWorker){
   var canvas=document.getElementById('bgSparkles');
   if(!canvas) return;
   var ctx=canvas.getContext('2d');
-  var dpr=window.devicePixelRatio||1, W=0,H=0, stars=[];
+  var dpr=1, W=0,H=0, stars=[];
   /* 全局背景星芒：白色星体 + 中性灰柔和光，白底区也能"浮"出来、不带紫调 */
   var COLORS=['rgba(255,255,255,','rgba(255,255,255,','rgba(228,230,255,'];
   function resize(){
@@ -1947,7 +1948,7 @@ if(navigator.serviceWorker){
     resize();
     stars=[];
     var count=Math.round(W*H/80000);
-    count=Math.max(10,Math.min(30,count));
+    count=Math.max(6,Math.min(15,count));
     /* 均匀网格 + 抖动分布，避免随机布点结块 */
     var cell=Math.sqrt((W*H)/count);
     var cols=Math.max(1,Math.round(W/cell));
