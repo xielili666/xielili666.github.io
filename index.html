@@ -10,7 +10,7 @@
 <meta property="og:title" content="谢丽丽 XIE LILI (xielili) · 个人作品集" />
 <meta property="og:description" content="谢丽丽 / XIE LILI (xielili) 视觉设计师作品集 —— AI 短剧、TVC、电商视觉等。" />
 <meta name="author" content="xielili 谢丽丽" />
-<link rel="preload" href="https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/hero-bg.mp4?v=42" as="video" type="video/mp4">
+<link rel="preload" href="https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/hero-bg.mp4?v=43" as="video" type="video/mp4">
 
 <style>
   /* =========== Reset & Base =========== */
@@ -86,7 +86,7 @@
     transition:background .3s ease,box-shadow .3s ease,padding .3s ease;
   }
   .site-header.scrolled{
-    background:rgba(245,244,241,.95);-webkit-
+    background:rgba(245,244,241,.95);
     padding:12px 40px;
   }
   /* 封面为深色时，顶部（未滚动）的透明导航改为浅色文字保证可读 */
@@ -177,7 +177,6 @@
     border:1px solid rgba(255,255,255,.25);
     border-radius:99px;
     background:rgba(255,255,255,.08);
-    -webkit-
     animation:nameIn 1.4s cubic-bezier(.2,.7,.2,1) backwards .05s;
   }
   .hero-name-eyebrow .star{color:#e9b8d8;font-size:13px;line-height:1}
@@ -923,12 +922,10 @@ if(navigator.serviceWorker){
   var heroVideo = document.getElementById('heroBgVideo');
   
   /* ---- 预加载封面视频 ---- */
-  var heroVideoSrc = 'https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/hero-bg.mp4?v=42';
+  var heroVideoSrc = 'https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/hero-bg.mp4?v=43';
   if(heroVideo){
-    /* preload="auto" 让浏览器自动下载视频 */
-    /* 明确设置 src 确保浏览器开始下载 */
-    heroVideo.src = heroVideoSrc;
-    heroVideo.load();
+    /* preload="auto" + link rel=preload 已让浏览器开始下载 */
+    /* 这里不再设置 src 和调用 load()，避免中断浏览器已有缓冲 */
   }
   
   /* ---- Canvas 粒子动画 ---- */
@@ -982,19 +979,22 @@ if(navigator.serviceWorker){
     var tw = document.getElementById('titleWrap');
     if(tw) tw.style.opacity = '1';
     
-    /* 播放封面视频：一旦可播放就开始 */
+    /* 播放封面视频：等视频缓冲够再播放，确保流畅 */
     if(heroVideo){
       heroVideo.muted = true;
+      /* 尝试立即播放（如果 video 已缓冲好） */
       function tryPlay(){
         var p = heroVideo.play();
         if(p) p.catch(function(){});
       }
-      tryPlay();
-      /* 如果还没准备好，等 canplaythrough（确保流畅播放） */
-      heroVideo.addEventListener('canplaythrough', function onReady(){
+      /* 等 canplaythrough（确保流畅播放）再播 */
+      var onThrough = function(){
+        heroVideo.removeEventListener('canplaythrough', onThrough);
         tryPlay();
-        heroVideo.removeEventListener('canplaythrough', onReady);
-      });
+      };
+      heroVideo.addEventListener('canplaythrough', onThrough);
+      /* 如果视频已经 readyState >= HAVE_ENOUGH_DATA，直接播 */
+      if(heroVideo.readyState >= 4){ tryPlay(); }
       /* 持续重试直到播放成功 */
       (function retry(){
         if(!heroVideo.paused) return;
@@ -1019,7 +1019,7 @@ if(navigator.serviceWorker){
     谢丽丽
   </div>
   <nav class="nav">
-    <a href="#works">首页</a>
+    <a href="#top">首页</a>
     <a href="#about">关于</a>
     <a href="#works">作品</a>
     <a href="#capabilities">能力</a>
@@ -1039,8 +1039,8 @@ if(navigator.serviceWorker){
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
   <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-hidden="true">
-    <source src="https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/hero-bg.mp4?v=42" type="video/mp4">
-    <source src="https://xielili666.github.io/hero-bg.mp4?v=42" type="video/mp4">
+    <source src="https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/hero-bg.mp4?v=43" type="video/mp4">
+    <source src="https://xielili666.github.io/hero-bg.mp4?v=43" type="video/mp4">
   </video>
   <div class="hero-vignette"></div>
 
@@ -1614,7 +1614,8 @@ if(navigator.serviceWorker){
       const m = {
         'cat-tvc':'#b8302e','cat-ec':'#5b5cf6','cat-aijm':'#7a3eb8',
         'cat-corp':'#1f6f5c','cat-city':'#c2410c','cat-aijm-oversea':'#9333ea',
-        'cat-ecf':'#0891b2','cat-creative-video':'#14b8a6','cat-ec-design':'#dc2626'
+        'cat-ecf':'#0891b2','cat-creative-video':'#14b8a6','cat-ec-design':'#dc2626',
+        'cat-ip-design':'#7c3aed'
       };
       return m[cls] || '#5b5cf6';
     }
