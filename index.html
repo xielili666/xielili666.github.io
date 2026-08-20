@@ -7,7 +7,7 @@
 <meta property="og:title" content="谢丽丽 XIE LILI (xielili) · 个人作品集" />
 <meta property="og:description" content="谢丽丽 / XIE LILI (xielili) 视觉设计师作品集 —— AI 短剧、TVC、电商视觉等。" />
 <meta name="author" content="xielili 谢丽丽" />
-<link rel="preload" as="video" href="https://fastly.jsdelivr.net/gh/xielili666/xielili666.github.io@main/works/hero-lite.mp4?v=47" crossorigin="anonymous">
+<link rel="preload" as="image" href="works/hero-poster.jpg?v=48" fetchpriority="high">
 
 <style>
   /* =========== Reset & Base =========== */
@@ -137,6 +137,9 @@
   }
   .bg-sparkles.is-active{opacity:.55}
   .hero-bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.hero-slider{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;background:#17081f}
+.hero-slide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.06);transition:opacity 1.3s ease,transform 1.3s ease;will-change:opacity}
+.hero-slide.is-active{opacity:1;transform:scale(1)}
 .hero{background-image:url("works/hero-poster.jpg");background-size:cover;background-position:center}
 .hero-vignette{
     position:absolute;inset:0;z-index:3;pointer-events:none;
@@ -970,37 +973,29 @@ if(navigator.serviceWorker){
     var tw = document.getElementById('titleWrap');
     if(tw) tw.style.opacity = '1';
     
-    /* 播放封面视频：等视频缓冲够再播放 */
-    var heroVideo = document.getElementById('heroBgVideo');
-    if(heroVideo){
-      heroVideo.muted = true;
-      /* 等缓冲充足再播放，避免开头缓冲卡顿；缓冲不足则等在 canplaythrough */
-      function tryPlay(){
-        heroVideo.play().catch(function(){
-          heroVideo.addEventListener('canplaythrough', tryPlay, { once:true });
-        });
+    /* 封面海报轮播：轻量图片，彻底告别视频缓冲卡顿 */
+    var heroSlides = document.querySelectorAll('#heroSlider .hero-slide');
+    if(heroSlides.length > 1){
+      var hsIdx = 0;
+      var hsTimer = null;
+      function hsStart(){
+        if(hsTimer) return;
+        hsTimer = setInterval(function(){
+          heroSlides[hsIdx].classList.remove('is-active');
+          hsIdx = (hsIdx + 1) % heroSlides.length;
+          heroSlides[hsIdx].classList.add('is-active');
+        }, 5500);
       }
-      tryPlay();
+      function hsStop(){ clearInterval(hsTimer); hsTimer = null; }
+      /* 滚出封面时暂停轮播，节省资源；回到封面自动恢复 */
+      var hsCtx = heroSlides[0].parentNode;
+      if('IntersectionObserver' in window && hsCtx){
+        new IntersectionObserver(function(entries){
+          entries.forEach(function(en){ en.isIntersecting ? hsStart() : hsStop(); });
+        }, { threshold: 0.15 }).observe(hsCtx);
+      }
+      hsStart();
     }
-    
-    /* CDN 容错：5秒后如果视频没开始播放，逐个切换 source */
-    var cdnSources = Array.prototype.map.call(heroVideo.querySelectorAll('source'), function(s){ return s.src; });
-    var fbIdx = 0;
-    setTimeout(function cdnFallback(){
-      if(!heroVideo.paused && heroVideo.readyState > 0) return;
-      fbIdx++;
-      if(fbIdx >= cdnSources.length) return;
-      heroVideo.src = cdnSources[fbIdx];
-      heroVideo.load();
-      heroVideo.play().catch(function(){});
-      setTimeout(cdnFallback, 4000);
-    }, 4000);
-
-    /* 用户交互时也尝试播放 */
-    function userPlay(){ var v = document.getElementById('heroBgVideo'); if(v && v.paused) v.play().catch(function(){}); }
-    document.addEventListener('click', userPlay);
-    document.addEventListener('touchstart', userPlay);
-    document.addEventListener('scroll', userPlay);
   }, 2500);
 })();
 </script>
@@ -1031,11 +1026,10 @@ if(navigator.serviceWorker){
 
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
-  <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="works/hero-poster.jpg" aria-hidden="true">
-    <source src="https://fastly.jsdelivr.net/gh/xielili666/xielili666.github.io@main/works/hero-lite.mp4?v=47" type="video/mp4">
-    <source src="https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/works/hero-cover.mp4?v=47" type="video/mp4">
-    <source src="works/hero-cover.mp4?v=47" type="video/mp4">
-  </video>
+  <div class="hero-slider" id="heroSlider" aria-hidden="true">
+    <img class="hero-slide is-active" src="works/hero-poster.jpg?v=48" alt="" loading="eager" fetchpriority="high" draggable="false">
+    <img class="hero-slide" src="works/hero-animated.webp?v=48" alt="" loading="eager" draggable="false">
+  </div>
   <div class="hero-vignette"></div>
 
   <!-- Floating particles -->
