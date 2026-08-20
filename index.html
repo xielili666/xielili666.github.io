@@ -138,7 +138,9 @@
     
   }
   .bg-sparkles.is-active{opacity:.55}
-  .hero-vignette{
+  .hero-bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.hero{background-image:url("works/hero-poster.jpg");background-size:cover;background-position:center}
+.hero-vignette{
     position:absolute;inset:0;z-index:3;pointer-events:none;
     background:linear-gradient(to bottom, rgba(10,5,30,0) 70%, rgba(10,5,30,.4) 100%);
   }
@@ -1038,10 +1040,10 @@ if(navigator.serviceWorker){
 
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
-  <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-hidden="true">
-    <source src="https://fastly.jsdelivr.net/gh/xielili666/xielili666.github.io@main/hero-bg.mp4?v=44" type="video/mp4">
-    <source src="https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/hero-bg.mp4?v=44" type="video/mp4">
-    <source src="hero-bg.mp4?v=44" type="video/mp4">
+  <video class="hero-bg-video" id="heroBgVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="works/hero-poster.jpg" aria-hidden="true">
+    <source src="https://fastly.jsdelivr.net/gh/xielili666/xielili666.github.io@main/hero-cover.mp4?v=45" type="video/mp4">
+    <source src="https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/hero-cover.mp4?v=45" type="video/mp4">
+    <source src="hero-cover.mp4?v=45" type="video/mp4">
   </video>
   <div class="hero-vignette"></div>
 
