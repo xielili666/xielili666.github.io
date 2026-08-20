@@ -12,7 +12,9 @@
 <meta name="author" content="xielili 谢丽丽" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@200;300;400;500;700;900&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- 字体改为非阻塞加载：页面先以系统字体秒开，Google 字体若连通再无缝替换，避免国内网络卡死/黑屏 -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&family=Montserrat:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@200;300;400;500;700;900&family=Playfair+Display:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&family=Montserrat:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@200;300;400;500;700;900&family=Playfair+Display:wght@400;500;600;700&display=swap"></noscript>
 <style>
 /* ============================================================
      Aker — Style Reference (light gallery system)
@@ -40,8 +42,8 @@
     --radius-card:8px;
     --radius-btn:80px;
     --radius-badge:1584px;
-    --font-display:'Montserrat','Noto Sans SC',sans-serif;
-    --font-body:'Montserrat','Noto Sans SC',sans-serif;
+    --font-display:'Montserrat','Noto Sans SC','PingFang SC','Microsoft YaHei','Source Han Sans SC',sans-serif;
+    --font-body:'Montserrat','Noto Sans SC','PingFang SC','Microsoft YaHei','Source Han Sans SC',sans-serif;
     --font-serif:'Noto Serif SC',Georgia,serif;
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -431,7 +433,7 @@
   .contact{padding:96px 5vw 110px;background:var(--midnight);color:#fff;position:relative;overflow:hidden;max-width:none;width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw)}
   .contact-head{position:relative;z-index:2;max-width:var(--page-max);margin:0 auto 56px;padding:0 8px}
   .contact-eyebrow{font-size:12px;font-weight:500;letter-spacing:.18em;color:rgba(255,255,255,.55);margin-bottom:18px;text-transform:uppercase}
-  .contact-title{font-family:'Playfair Display','Noto Serif SC',Georgia,serif;font-weight:600;font-size:clamp(40px,7vw,92px);line-height:1.05;letter-spacing:-0.01em;color:#fff;margin:0 0 20px}
+  .contact-title{font-family:'Playfair Display','Noto Serif SC','Songti SC','SimSun',Georgia,serif;font-weight:600;font-size:clamp(40px,7vw,92px);line-height:1.05;letter-spacing:-0.01em;color:#fff;margin:0 0 20px}
   .contact-desc{font-size:15px;color:rgba(255,255,255,.62);line-height:1.8;max-width:520px}
   .contact-tiles{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:var(--page-max);margin:0 auto;padding:0 8px}
   .contact-tile{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:260px;padding:28px 26px 24px;border-radius:var(--radius-card);border:1px solid rgba(255,255,255,.08);background:var(--char);color:#fff;text-align:left;text-decoration:none;cursor:pointer;transition:transform .35s cubic-bezier(.2,.7,.2,1),border-color .35s ease,background .35s ease;overflow:hidden}
@@ -444,7 +446,7 @@
   .contact-tile.tile-green .tile-pill{color:#3dd17e;background:rgba(61,209,126,.12)}
   .contact-tile.tile-pink .tile-pill{color:#ff5e80;background:rgba(255,94,128,.12)}
   .tile-pill svg{flex:0 0 auto}
-  .tile-text{font-family:'Playfair Display','Noto Serif SC',Georgia,serif;font-size:clamp(20px,1.9vw,26px);font-weight:500;line-height:1.35;color:#fff;margin:24px 0 0;letter-spacing:-0.005em}
+  .tile-text{font-family:'Playfair Display','Noto Serif SC','Songti SC','SimSun',Georgia,serif;font-size:clamp(20px,1.9vw,26px);font-weight:500;line-height:1.35;color:#fff;margin:24px 0 0;letter-spacing:-0.005em}
   .tile-text .sub{display:block;margin-top:8px;font-family:var(--font-body);font-size:13px;font-weight:400;color:rgba(255,255,255,.55);letter-spacing:0}
   .tile-arrow{position:absolute;right:22px;bottom:22px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;transition:transform .35s ease,background .35s ease}
   .contact-tile:hover .tile-arrow{transform:translate(4px,-4px);background:var(--ember)}
@@ -1584,7 +1586,7 @@
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js?v=22').catch(function () {});
+      navigator.serviceWorker.register('/sw.js?v=23').catch(function () {});
     });
   }
 </script>
