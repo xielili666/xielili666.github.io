@@ -123,12 +123,8 @@
   }
   /* Three.js 画布：实时渲染陨石+尘埃带+星云+lens flare，背景透明让 CSS 紫色透过来 */
   
-  .bg-sparkles{
-    position:fixed;inset:0;z-index:0;pointer-events:none;
-    opacity:0;transition:opacity .4s ease;
-    
-  }
-  .bg-sparkles.is-active{opacity:.55}
+  
+  
   
 
 .hero{background:linear-gradient(165deg,#150b26 0%,#2a1850 40%,#4a1d6e 68%,#7d2f8e 100%);background-attachment:fixed}
@@ -4131,7 +4127,9 @@
   .title-text-col{animation:heroFadeUp 1.2s cubic-bezier(.22,.61,.36,1) .35s both}
   .hero-name{animation:heroFadeUp 1.2s cubic-bezier(.22,.61,.36,1) .6s both}
   @media(max-width:820px){.hero-sub{font-size:clamp(30px,9vw,54px)}}
-</style></head>
+  .hero-bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+</style>  <link rel="preload" as="video" href="https://fastly.jsdelivr.net/gh/xielili666/xielili666.github.io@main/works/cover-hd.mp4?v=50" crossorigin="anonymous" fetchpriority="high">
+</head>
 <body style="">
 <script>
 /* 清除所有旧的 Service Worker 缓存 */
@@ -4237,10 +4235,15 @@ if(navigator.serviceWorker){
 </header>
 
 <!-- 全局背景星芒：fixed 铺满视口，滚到封面外才显示 -->
-<canvas id="bgSparkles" class="bg-sparkles is-active" aria-hidden="true" width="873" height="858" style="width: 873px; height: 858px;"></canvas>
+
 
 <!-- =========== Hero =========== -->
 <section class="hero" id="top">
+  <video class="hero-bg-video" id="heroBgVideo" autoplay="" muted="" loop="" playsinline="" webkit-playsinline="" preload="auto" poster="works/hero-poster.jpg" aria-hidden="true">
+    <source src="https://fastly.jsdelivr.net/gh/xielili666/xielili666.github.io@main/works/cover-hd.mp4?v=50" type="video/mp4">
+    <source src="https://cdn.jsdelivr.net/gh/xielili666/xielili666.github.io@main/works/cover-hd.mp4?v=50" type="video/mp4">
+    <source src="works/cover-hd.mp4?v=50" type="video/mp4">
+  </video>
 
   <div class="hero-vignette"></div>
 
@@ -5199,5 +5202,14 @@ if(navigator.serviceWorker){
 
 <div class="light"><div class="trae-browser-inspect-highlight-tag"></div><div class="trae-browser-inspect-highlight-tag"></div><div class="trae-browser-inspect-highlight-box"></div><div class="trae-browser-inspect-highlight-box trae-browser-inspect-select-highlight-box" style="cursor: grab; pointer-events: auto;"></div><div class="trae-browser-inspect-overlay" style="display: none;"></div><div class="trae-browser-inspect-comment-card-container"></div><div class="trae-browser-inspect-drop-indicator" style="position: fixed; pointer-events: none; z-index: 999999; display: none; background: linear-gradient(90deg, rgb(0, 102, 255), rgb(0, 170, 255)); box-shadow: rgba(0, 102, 255, 0.4) 0px 0px 4px 1px, rgba(0, 102, 255, 0.3) 0px 0px 8px 2px, rgba(0, 102, 255, 0.2) 0px 0px 12px 3px; transition: transform 0.15s, width 0.15s, height 0.15s;"></div></div><div class="trae-browser-inspect-text-selection-container light"><div class="trae-browser-inspect-comment-card-container"></div></div><div class="trae-browser-inspect-operation light"></div>
 
-<div class="light"><div class="trae-browser-inspect-highlight-tag"></div><div class="trae-browser-inspect-highlight-tag"></div><div class="trae-browser-inspect-highlight-box"></div><div class="trae-browser-inspect-highlight-box trae-browser-inspect-select-highlight-box" style="cursor: grab; pointer-events: auto;"></div><div class="trae-browser-inspect-overlay" style="display: none;"></div><div class="trae-browser-inspect-comment-card-container"></div><div class="trae-browser-inspect-drop-indicator" style="position: fixed; pointer-events: none; z-index: 999999; display: none; background: linear-gradient(90deg, rgb(0, 102, 255), rgb(0, 170, 255)); box-shadow: rgba(0, 102, 255, 0.4) 0px 0px 4px 1px, rgba(0, 102, 255, 0.3) 0px 0px 8px 2px, rgba(0, 102, 255, 0.2) 0px 0px 12px 3px; transition: transform 0.15s, width 0.15s, height 0.15s;"></div></div><div class="trae-browser-inspect-text-selection-container light"><div class="trae-browser-inspect-comment-card-container"></div></div><div class="trae-browser-inspect-operation light"></div></body></html>
+<div class="light"><div class="trae-browser-inspect-highlight-tag"></div><div class="trae-browser-inspect-highlight-tag"></div><div class="trae-browser-inspect-highlight-box"></div><div class="trae-browser-inspect-highlight-box trae-browser-inspect-select-highlight-box" style="cursor: grab; pointer-events: auto;"></div><div class="trae-browser-inspect-overlay" style="display: none;"></div><div class="trae-browser-inspect-comment-card-container"></div><div class="trae-browser-inspect-drop-indicator" style="position: fixed; pointer-events: none; z-index: 999999; display: none; background: linear-gradient(90deg, rgb(0, 102, 255), rgb(0, 170, 255)); box-shadow: rgba(0, 102, 255, 0.4) 0px 0px 4px 1px, rgba(0, 102, 255, 0.3) 0px 0px 8px 2px, rgba(0, 102, 255, 0.2) 0px 0px 12px 3px; transition: transform 0.15s, width 0.15s, height 0.15s;"></div></div><div class="trae-browser-inspect-text-selection-container light"><div class="trae-browser-inspect-comment-card-container"></div></div><div class="trae-browser-inspect-operation light"></div><script>
+(function(){
+  var v=document.getElementById('heroBgVideo');
+  if(!v) return;
+  v.muted=true;
+  function p(){ var q=v.play(); if(q&&q.then){ q.catch(function(){ v.addEventListener('canplaythrough',p,{once:true}); }); } }
+  setTimeout(p,250);
+})();
+</script>
+</body></html>
 
