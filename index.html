@@ -37,13 +37,7 @@
     position:absolute;inset:0;width:100%;height:100%;
     pointer-events:none;z-index:1;
   }
-  .page-loader-ring{
-    position:relative;z-index:2;
-    width:60px;height:60px;border:3px solid rgba(255,255,255,.1);
-    border-top-color:#ec4899;border-radius:50%;
-    animation:loaderSpin .9s linear infinite;
-    margin-bottom:24px;
-  }
+  
   @keyframes loaderSpin{to{transform:rotate(360deg)}}
   .page-loader-text{
     position:relative;z-index:2;
@@ -4147,7 +4141,6 @@ if(navigator.serviceWorker){
 <div class="page-loader" id="pageLoader">
 
   <canvas class="page-loader-canvas" id="loaderCanvas"></canvas>
-  <div class="page-loader-ring"></div>
   <div class="page-loader-text">✨ 谢丽丽 · AI短剧作品集</div>
   <div class="page-loader-sub">XIE LILI</div>
 </div>
