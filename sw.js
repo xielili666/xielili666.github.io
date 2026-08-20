@@ -4,7 +4,7 @@
  * 注意：升级时清理所有旧版本缓存（install + activate 都清理），
  *       避免旧 SW 缓存的旧视频残留导致用户一直看到老文件。
  */
-const CACHE = 'xielili-works-v22';
+const CACHE = 'xielili-works-v23';
 
 self.addEventListener('install', (e) => {
   e.waitUntil((async () => {
@@ -88,6 +88,28 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   if (event.request.method !== 'GET') return;
   if (url.origin !== self.location.origin) return;
+
+  const p = url.pathname;
+  // 页面本身（index.html 等）：联网优先 + 缓存兜底
+  // 联网时始终取最新内容；网络失败/超时回退到缓存，避免白屏/黑屏
+  if (p === '/' || p === '' || p.endsWith('.html') || p.endsWith('/')) {
+    event.respondWith((async () => {
+      const cache = await caches.open(CACHE);
+      try {
+        const resp = await fetch(event.request);
+        if (resp && resp.status === 200) cache.put(event.request.url, resp.clone());
+        return resp;
+      } catch (e) {
+        const cached = await cache.match(event.request);
+        if (cached) return cached;
+        const idx = await cache.match(self.location.origin + '/index.html');
+        if (idx) return idx;
+        return new Response('', { status: 504 });
+      }
+    })());
+    return;
+  }
+
   if (!isAsset(url.pathname)) return;
 
   const req = event.request;
