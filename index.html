@@ -4635,6 +4635,7 @@ if(navigator.serviceWorker){
     const grid = document.getElementById('worksGrid');
     const frow = document.getElementById('filterRow');
     if(!grid) return;
+    if(frow) frow.innerHTML = '';  // 先清空，避免与静态按钮重复渲染
     const spans = ['span4','span4','span4','span4','span4','span4','span4','span4','span4','span4','span4','span4'];
     const cats = ['全部','AI短剧 / 海外短剧','AI短剧','TVC广告','企业宣传片','城市宣传片','创意视频','电商设计','IP形象设计'];
     WORKS.forEach(w => { if(!cats.includes(w.cat)) cats.push(w.cat); });
