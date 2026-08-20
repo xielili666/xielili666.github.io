@@ -1537,13 +1537,13 @@ if(navigator.serviceWorker){
           else if(/预告|trailer|preview/i.test(lab)) { cls = 'is-trailer'; order = -1; }
           return '<div class="work-ep-cell ' + cls + '" style="order:' + order + '">' +
                    '<span class="work-ep-cell-label tl ' + cls + '">' + lab + '</span>' +
-                   '<video src="' + ep.src + '" muted loop playsinline preload="none"></video>' +
+                   '<video src="' + ep.src + '" muted loop playsinline preload="none" poster="' + (w.poster||'') + '"></video>' +
                  '</div>';
         }).join('') + '</div>';
       } else if (w.coverVideo) {
-        mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" loading="lazy"><video class="work-poster-video" src="' + w.video + '" muted loop playsinline preload="none"></video>';
+        mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" ><video class="work-poster-video" src="' + w.video + '" muted loop playsinline preload="none"></video>';
       } else {
-        mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" loading="lazy">';
+        mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" >';
       }
       card.innerHTML =
         (w.vertical ? '<span class="work-916-badge">9:16 · 信息流</span>' : '') +
@@ -1584,8 +1584,8 @@ if(navigator.serviceWorker){
         '<div class="work-showcase-right">' +
           '<div class="work-showcase-video" data-index="'+i+'">' +
             '<span class="work-showcase-video-label">'+(w.showcaseLabel || 'AI 短剧 · 正片')+'</span>' +
-            '<img src="'+w.poster+'" alt="'+w.title+'" loading="lazy">' +
-            '<video src="'+w.video+'" muted loop playsinline preload="metadata"></video>' +
+            '<img src="'+w.poster+'" alt="'+w.title+'" >' +
+            '<video src="'+w.video+'" muted loop playsinline preload="auto" poster="'+w.poster+'"></video>' +
           '</div>' +
         '</div>';
       // hover 播放：右侧视频块 hover 切换 poster 与 video
