@@ -4621,12 +4621,11 @@ if(navigator.serviceWorker){
       desc:'以「珍珠温润光泽」为灵感，打造温柔治愈系珍珠少女 IP。完整 11 模块设定涵盖角色档案、设计理念、角色标签、色彩搭配、标准色、表情包、细节展示、包装展示、动作造型、盲盒展示与周边展示，直接面向盲盒量产与品牌授权场景。',
       points:['角色全案设定','盲盒量产方案','表情包设计','周边衍生开发','色彩系统规范','包装设计'] },
     { title:'星黛露 Stella Lulu', cat:'IP形象设计', catTag:'IP形象设计 · 星光少女', poster:'works/ip-stella-lulu.jpg',
-      videos:['works/ip-stella-lulu-vid1.mp4'],
       meta:'IP 角色全案设定 · 11 模块展示',
       desc:'以「星光与温柔」为设计概念，将梦幻紫色与星元素融合，打造温柔治愈、充满想象力的星光少女 IP。包含三视图、细节展示、动作造型、盲盒展示、周边展示等 11 个完整模块，具备成熟的商业落地与衍生品开发能力。',
       points:['角色全案设定','三视图规范','动作造型设计','盲盒量产方案','周边衍生开发','元素提取'] },
     { title:'薄荷茉莉 Mint Jasmine', cat:'IP形象设计', catTag:'IP形象设计 · 薄荷茉莉', poster:'works/ip-mint-jasmine.jpg',
-      videos:['works/ip-mint-jasmine-vid1.mp4','works/ip-mint-jasmine-vid2.mp4','works/ip-mint-jasmine-vid3.mp4'],
+      videos:['works/ip-bjd-mint.mp4'],
       meta:'IP 角色全案设定 · 11 模块展示',
       desc:'以「茉莉与薄荷」融合为概念，强调自然清新与治愈美学。完整设定包含角色档案、设计理念、三视图、细节展示、动作展示、包装展示、盲盒展示、周边展示与元素提取等 11 模块，覆盖从角色设定到量产落地的全流程。',
       points:['角色全案设定','三视图规范','动作展示','盲盒量产方案','周边衍生开发','元素提取'] }
@@ -4730,7 +4729,7 @@ if(navigator.serviceWorker){
                  '</div>';
         }).join('') + '</div>';
       } else if (w.coverVideo) {
-        mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" ><video class="work-poster-video" src="' + w.video + '" muted loop playsinline preload="none"></video>';
+        mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" ><video class="work-poster-video" src="' + w.video + '" poster="'+w.poster+'" muted loop playsinline preload="none"></video>';
       } else {
         mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" >';
       }
@@ -4950,7 +4949,7 @@ if(navigator.serviceWorker){
         w.videos.forEach((src) => {
           const wrap = document.createElement('div');
           wrap.className = 'work-modal-eps-item';
-          wrap.innerHTML = '<video src="'+src+'" controls playsinline preload="metadata"></video>';
+          wrap.innerHTML = '<video src="'+src+'" controls playsinline preload="metadata" poster="'+(w.poster||'')+'"></video>';
           workModalEps.appendChild(wrap);
         });
       } else {
