@@ -4552,7 +4552,7 @@ if(navigator.serviceWorker){
       tools:['Deepseek','小云雀 Seedance','libTV','剪映完成剪辑'],
       showcaseLabel:'AI 短剧 · 正片'
     },
-    { title:'企业宣传片', cat:'企业宣传片', poster:'works/enterprise-film.jpg', video:'works/enterprise-film.mp4', meta:'品牌形象 · 企业传播', desc:'面向企业品牌形象展示，通过更完整的场景、节奏和视觉语言传递企业气质，适合官网、招商和信息流切片使用。', points:['企业品牌形象','宣传片表达','多场景传播'],
+    { title:'企业宣传片', cat:'企业宣传片', poster:'works/corporate-poster.png', video:'works/enterprise-film.mp4', meta:'品牌形象 · 企业传播', desc:'面向企业品牌形象展示，通过更完整的场景、节奏和视觉语言传递企业气质，适合官网、招商和信息流切片使用。', points:['企业品牌形象','宣传片表达','多场景传播'],
       showcase:true,
       showcaseTags:['科技企业','品牌形象','宣传片'],
       showcaseTitle:'【纳米技术突破 · 尺寸极限革新】',
@@ -4747,7 +4747,7 @@ if(navigator.serviceWorker){
       } else if (w.coverVideo) {
         mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" ><video class="work-poster-video" src="' + w.video + '" poster="'+w.poster+'" muted loop playsinline preload="none"></video>';
       } else if (!w.poster && w.video) {
-        mediaHtml = '<video class="work-poster-video" src="' + w.video + '" muted loop playsinline preload="metadata"></video>';
+        mediaHtml = '<video class="work-poster-video" src="' + w.video + '" muted loop playsinline preload="auto"></video>';
       } else {
         mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" >';
       }
