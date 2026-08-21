@@ -4572,6 +4572,7 @@ if(navigator.serviceWorker){
       tools:['Deepseek','小云雀 Seedance','libTV','剪映完成剪辑'],
       showcaseLabel:'城市宣传片 · 文旅篇'
     },
+    { title:'重庆文旅宣传片', cat:'城市宣传片', video:'works/chongqing-tourism.mp4', meta:'文旅 · 城市宣传', desc:'以重庆山城地貌与夜景为核心意象的城市 / 文旅宣传片，强化地域氛围、城市形象塑造与短视频切片传播。', points:['城市形象塑造','地域氛围营造','短视频切片传播'] },
     { title:'雨夜 AI 短剧', cat:'AI短剧', poster:'works/rainy-night.jpg', video:'works/rainy-night.mp4', meta:'AI 短剧 · 情绪氛围', desc:'以雨夜氛围构建戏剧化情绪场，强化人物、环境与故事悬念，适合用于 AI 短剧方向的视觉样片展示。', points:['情绪场景塑造','戏剧化镜头','AI 短剧氛围'],
       showcase:true,
       showcaseTags:['雨夜','情绪氛围','AI 短剧'],
@@ -4736,6 +4737,8 @@ if(navigator.serviceWorker){
         }).join('') + '</div>';
       } else if (w.coverVideo) {
         mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" ><video class="work-poster-video" src="' + w.video + '" poster="'+w.poster+'" muted loop playsinline preload="none"></video>';
+      } else if (!w.poster && w.video) {
+        mediaHtml = '<video class="work-poster-video" src="' + w.video + '" muted loop playsinline preload="metadata"></video>';
       } else {
         mediaHtml = '<img class="work-poster" src="' + w.poster + '" alt="' + w.title + '" >';
       }
